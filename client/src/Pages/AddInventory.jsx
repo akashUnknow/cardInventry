@@ -66,18 +66,33 @@ const AddInventory = () => {
     "Zeta 132",
   ];
 
-  // Form Factor
   const formFactors = ["TRI", "2FF", "3FF", "4FF", "MFF2", "B4"];
 
-  // form handel
+  const formFactorMap = {
+    TRI: "tri",
+    "2FF": "twoFF",
+    "3FF": "threeFF",
+    "4FF": "fourFF",
+    MFF2: "mff2",
+    B4: "b4",
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data={
-      description: cardDescription,
-      formFactor,
-      quantity,
+
+    const mappedKey = formFactorMap[formFactor];
+    if (!mappedKey) {
+      toast.error("Invalid form factor selected.");
+      return;
     }
-    // console.log("Form Data:", data);
+
+    const data = {
+      cardDescription: cardDescription,
+      [mappedKey]: parseInt(quantity),
+    };
+
+    console.log("Form Data:", data);
+
     try {
       const response = await fetch("http://localhost:8080/api/cards/add-card", {
         method: "POST",
@@ -86,21 +101,19 @@ const AddInventory = () => {
         },
         body: JSON.stringify(data),
       });
-      if (response.ok) {
-        // alert("Card added successfully!");
-        toast.success("Card added successfully!");
-        // Redirect to the card inventory page
-        navigate(Routecardinventry);
 
+      if (response.ok) {
+        toast.success("Card added successfully!");
+        navigate(Routecardinventry);
       } else {
         toast.error("Failed to add card. Please try again.");
       }
-
     } catch (error) {
-       console.error("Error:", error);
-      alert("An error occurred while adding the card.");
+      console.error("Error:", error);
+      toast.error("An error occurred while adding the card.");
     }
   };
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       <Card className="w-[600px] p-6 shadow-lg bg-white">
@@ -112,7 +125,7 @@ const AddInventory = () => {
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Row: Card Description */}
+            {/* Card Description */}
             <div className="flex items-center gap-4">
               <label className="w-48 text-right font-medium">
                 Card Description:
@@ -132,11 +145,9 @@ const AddInventory = () => {
               </select>
             </div>
 
-            {/* Row: Form Factor */}
+            {/* Form Factor */}
             <div className="flex items-center gap-4">
-              <label className="w-48 text-right font-medium">
-                Form Factor:
-              </label>
+              <label className="w-48 text-right font-medium">Form Factor:</label>
               <select
                 className="flex-1 p-2 border border-gray-300 rounded-md"
                 value={formFactor}
@@ -152,33 +163,33 @@ const AddInventory = () => {
               </select>
             </div>
 
-            {/* Input Rows */}
-            {[["Quantity", "Quantity"]].map(([labelText, placeholder]) => (
-              <div key={labelText} className="flex items-center gap-4">
-                <label className="w-48 text-right font-medium">
-                  {labelText}:
-                </label>
-                <Input
-                  className="flex-1"
-                  type="text"
-                  placeholder={placeholder}
-                  min="1"
+            {/* Quantity */}
+            <div className="flex items-center gap-4">
+              <label className="w-48 text-right font-medium">Quantity:</label>
+              <Input
+                className="flex-1"
+                type="number"
+                placeholder="Quantity"
+                min="1"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 required
-                />
-              </div>
-            ))}
-             <CardFooter className="flex justify-center gap-4 mt-6">
-          <Button type="submit" className="bg-blue-600 hover:bg-blue-500">Save</Button>
-          <Link to={Routecardinventry}>
-            <Button type="button"  className="bg-red-600 hover:bg-red-500">Cancel</Button>
-          </Link>
-        </CardFooter>
+              />
+            </div>
+
+            {/* Buttons */}
+            <CardFooter className="flex justify-center gap-4 mt-6">
+              <Button type="submit" className="bg-blue-600 hover:bg-blue-500">
+                Save
+              </Button>
+              <Link to={Routecardinventry}>
+                <Button type="button" className="bg-red-600 hover:bg-red-500">
+                  Cancel
+                </Button>
+              </Link>
+            </CardFooter>
           </form>
         </CardContent>
-
-       
       </Card>
     </div>
   );

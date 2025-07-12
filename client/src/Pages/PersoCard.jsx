@@ -28,16 +28,54 @@ const PersoCard = () => {
   });
 
   const cardDescriptions = [
-    "SkySIM Avior 80nm - AV340 BPU", "SkySIM Avior 80nm - AV340 non BPU", "SkySIM Avior 80nm - AV440", "SkySIM Avior 80nm - AV1.2M (QM)",
-    "Orion - 480", "Orion - 800", "Orion - 800 M2M", "Dragon/Wega LTE", "Phoenix 400", "Phoenix 512", "Phoenix 512 Pro", "Avior 480 Pro",
-    "CX 97 1M crypto in-car", "Hercules 1.2M in-car", "CX 97 1M no-crypto M2M", "CX 97 1 M no-crypto in-car", "Avior Pro 340",
-    "Hercules 1.2M 80nm", "Wega", "Argo 320", "Phoenix 670", "Luna 1.3M", "Luna 1.3M M2M", "Lyral.5M / Polarisl.5M", "Luna 1.0M",
-    "Argo 512", "Argo 512 M2m in Car", "M2M AR360 in-car QFN8", "Argo 400","AVIOR 560","AVIOR 256","AVIOR 320", "AVIOR 420",
-    "Avior 700", "Avior Pro 700", "Dragon III", "SkySIM CX - Scorpius 420", "SkySIM CX - Scorpius 560 130nm", "SkySIM CX - Scorpius 768",
-    "SkySIM CX 90nm - Cygnus 1.2M EVO classic", "SkySIM CX 90nm - Cygnus 1.2M no Mifare", "Aries", "Tong Fang-Prism", "Zeta 480","Zeta 132"
+    "SkySIM Avior 80nm - AV340 BPU",
+    "SkySIM Avior 80nm - AV340 non BPU",
+    "SkySIM Avior 80nm - AV440",
+    "SkySIM Avior 80nm - AV1.2M (QM)",
+    "Orion - 480",
+    "Orion - 800",
+    "Orion - 800 M2M",
+    "Dragon/Wega LTE",
+    "Phoenix 400",
+    "Phoenix 512",
+    "Phoenix 512 Pro",
+    "Avior 480 Pro",
+    "CX 97 1M crypto in-car",
+    "Hercules 1.2M in-car",
+    "CX 97 1M no-crypto M2M",
+    "CX 97 1 M no-crypto in-car",
+    "Avior Pro 340",
+    "Hercules 1.2M 80nm",
+    "Wega",
+    "Argo 320",
+    "Phoenix 670",
+    "Luna 1.3M",
+    "Luna 1.3M M2M",
+    "Lyral.5M / Polarisl.5M",
+    "Luna 1.0M",
+    "Argo 512",
+    "Argo 512 M2m in Car",
+    "M2M AR360 in-car QFN8",
+    "Argo 400",
+    "AVIOR 560",
+    "AVIOR 256",
+    "AVIOR 320",
+    "AVIOR 420",
+    "Avior 700",
+    "Avior Pro 700",
+    "Dragon III",
+    "SkySIM CX - Scorpius 420",
+    "SkySIM CX - Scorpius 560 130nm",
+    "SkySIM CX - Scorpius 768",
+    "SkySIM CX 90nm - Cygnus 1.2M EVO classic",
+    "SkySIM CX 90nm - Cygnus 1.2M no Mifare",
+    "Aries",
+    "Tong Fang-Prism",
+    "Zeta 480",
+    "Zeta 132",
   ];
 
-  const formFactors = ["TRI", "2FF", "3FF", "4FF", "MFF2","B4"];
+  const formFactors = ["TRI", "2FF", "3FF", "4FF", "MFF2", "B4"];
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -56,37 +94,21 @@ const PersoCard = () => {
       customer,
       rst,
       telcaPersoTest,
-      shredCard
+      shredCard,
     } = formData;
-
-    if (!cardDescription || !formFactor || !usedQuantity || isNaN(usedQuantity)) {
+    if (
+      !cardDescription ||
+      !formFactor ||
+      !usedQuantity ||
+      isNaN(usedQuantity)
+    ) {
       toast.warn("Please enter all required fields correctly.");
       return;
     }
-
     try {
-      // 1. Check availability
-      const countRes = await fetch(
-        `http://localhost:8080/api/cards/count?description=${encodeURIComponent(
-          cardDescription
-        )}&formFactor=${encodeURIComponent(formFactor)}`
-      );
-
-      if (!countRes.ok) {
-        toast.error("Failed to check card availability.");
-        return;
-      }
-
-      const countData = await countRes.json();
-
-      if (countData.count < Number(usedQuantity)) {
-        toast.warn(`Only ${countData.count} cards available. Not enough stock.`);
-        return;
-      }
-
-      // 2. Save perso card data
       const persoData = {
         cardDescription,
+        usedQuantity,
         formFactor,
         profile,
         configurator,
@@ -96,43 +118,36 @@ const PersoCard = () => {
         telcaPersoTest,
         shredCard,
       };
-
-      const saveRes = await fetch("http://localhost:8080/api/cards/cardperso", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(persoData),
-      });
-
-      if (!saveRes.ok) {
-        toast.error("Failed to save card details.");
+      if (
+        parseInt(rst) + parseInt(telcaPersoTest) + parseInt(shredCard) !==
+        parseInt(usedQuantity)
+      ) {
+        toast.warn(
+          "Total of RST, TelcaPerso Test, and Shred Card must equal Used Quantity."
+        );
         return;
       }
 
-      // 3. Update inventory (reduce quantity)
-      const updateRes = await fetch("http://localhost:8080/api/cards/use", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          description: cardDescription,
-          formFactor: formFactor,
-          usedQuantity: Number(usedQuantity),
-        }),
-      });
-
-      if (!updateRes.ok) {
-        toast.error("Card saved, but failed to update inventory.");
-        return;
-      }
-
-      const updateData = await updateRes.json();
-
-      toast.success(
-        `Card used successfully. Remaining: ${updateData.remainingTotalQuantity}`
+      const response = await fetch(
+        "http://localhost:8080/api/cards/perso-card",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(persoData), // replace with actual state
+        }
       );
-      navigate(Routecardinventry);
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("Unexpected error occurred.");
+
+      if (!response.ok) {
+        const errorText = await response.text(); // get plain text message
+        throw new Error(errorText); // this will go to catch block
+      }
+
+      const result = await response.json();
+      toast.success("Card details saved successfully!");
+      navigate(Routecardinventry); // redirect to card inventory page
+      console.log(result);
+    } catch (err) {
+      alert(`❌ Error: ${err.message}`);
     }
   };
 
@@ -149,7 +164,9 @@ const PersoCard = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Card Description */}
             <div className="flex items-center gap-4">
-              <label className="w-48 text-right font-medium">Card Description:</label>
+              <label className="w-48 text-right font-medium">
+                Card Description:
+              </label>
               <select
                 name="cardDescription"
                 value={formData.cardDescription}
@@ -159,14 +176,18 @@ const PersoCard = () => {
               >
                 <option value="">-- Select --</option>
                 {cardDescriptions.map((desc, index) => (
-                  <option key={index} value={desc}>{desc}</option>
+                  <option key={index} value={desc}>
+                    {desc}
+                  </option>
                 ))}
               </select>
             </div>
 
             {/* Form Factor */}
             <div className="flex items-center gap-4">
-              <label className="w-48 text-right font-medium">Form Factor:</label>
+              <label className="w-48 text-right font-medium">
+                Form Factor:
+              </label>
               <select
                 name="formFactor"
                 value={formData.formFactor}
@@ -176,14 +197,18 @@ const PersoCard = () => {
               >
                 <option value="">-- Select --</option>
                 {formFactors.map((f, index) => (
-                  <option key={index} value={f}>{f}</option>
+                  <option key={index} value={f}>
+                    {f}
+                  </option>
                 ))}
               </select>
             </div>
 
             {/* Quantity */}
             <div className="flex items-center gap-4">
-              <label className="w-48 text-right font-medium">Used Quantity:</label>
+              <label className="w-48 text-right font-medium">
+                Used Quantity:
+              </label>
               <Input
                 type="number"
                 name="usedQuantity"

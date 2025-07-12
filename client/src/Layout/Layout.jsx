@@ -85,7 +85,7 @@ const Layout = () => {
       </div>
 
       {/* Main Content */}
-      <div className="p-8 bg-gray-100 min-h-screen">
+      <div className="p-8 bg-gray-100 min-h-screen overflow-hidden">
         <Outlet />
       </div>
     </main>

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -18,7 +19,14 @@ import {
   Legend,
 } from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const ChartDashboard = () => {
   const [category, setCategory] = useState("All");
@@ -27,18 +35,40 @@ const ChartDashboard = () => {
   const [dateTo, setDateTo] = useState("");
 
   const DgdataByMonth = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+    labels: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+    ],
     datasets: [
       {
         label: "Data genration ",
-        data: [120, 190, 300, 500, 200],
+        data: [120, 190, 300, 500, 200, 120, 190, 300, 500, 200],
         backgroundColor: "rgba(59, 130, 246, 0.7)",
         borderRadius: 8,
       },
     ],
   };
-   const DgdataByDATE = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+  const DgdataByDATE = {
+    labels: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+    ],
     datasets: [
       {
         label: "Data genration ",
@@ -49,19 +79,29 @@ const ChartDashboard = () => {
     ],
   };
 
-
   const BApdatbyMonth = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+    labels: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+    ],
     datasets: [
       {
         label: "BAP",
-        data: [700, 1100, 500, 800, 300],
+        data: [700, 1100, 500, 800, 300, 120, 190, 300, 500, 200],
         backgroundColor: "rgba(34, 197, 94, 0.7)",
         borderRadius: 8,
       },
     ],
   };
-   const BapataByDATE = {
+  const BapataByDATE = {
     labels: [],
     datasets: [
       {
@@ -82,7 +122,7 @@ const ChartDashboard = () => {
   };
 
   return (
-    <div className="w-full h-screen p-4 bg-gray-100 space-y-4 overflow-auto">
+    <div className="w-full min-h-screen p-4 bg-gray-100 space-y-4">
       {/* Filters */}
       <Card className="max-w-7xl mx-auto p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -119,24 +159,32 @@ const ChartDashboard = () => {
           {/* Date From */}
           <div>
             <label className="block text-sm font-medium mb-1">From</label>
-            <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+            <Input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+            />
           </div>
 
           {/* Date To */}
           <div>
             <label className="block text-sm font-medium mb-1">To</label>
-            <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+            <Input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+            />
           </div>
         </div>
       </Card>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-7xl mx-auto h-[calc(100%-180px)]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-7xl mx-auto">
         <Card className="h-full">
           <CardHeader>
             <CardTitle>Data genration</CardTitle>
           </CardHeader>
-          <CardContent className="h-[calc(100%-72px)]">
+          <CardContent className="h-[450px] w-full">
             <div className="h-full w-full">
               <Bar data={DgdataByMonth} options={options} />
             </div>
@@ -147,13 +195,18 @@ const ChartDashboard = () => {
           <CardHeader>
             <CardTitle>BAP</CardTitle>
           </CardHeader>
-          <CardContent className="h-[calc(100%-72px)]">
+          <CardContent className="h-[450px] w-full">
             <div className="h-full w-full">
               <Bar data={BApdatbyMonth} options={options} />
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Footer */}
+      <footer className="w-full text-center py-4 text-sm text-gray-500">
+        © {new Date().getFullYear()} Your Company Name. All rights reserved.
+      </footer>
     </div>
   );
 };

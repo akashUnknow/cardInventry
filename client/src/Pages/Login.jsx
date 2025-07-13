@@ -19,7 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 // Define Zod schema
 const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
+  userName: z.string().min(1, "userName is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -36,30 +36,42 @@ const Login = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const handleForm = async (formData) => {
-    try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+const handleForm = async (formData) => {
+  console.log(formData)
+  try {
+    const response = await fetch("http://localhost:8080/api/dg/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
 
-      const data = await response.json();
+    let data;
 
-      if (response.ok) {
-        toast.success("Login successful!");
-        localStorage.setItem("token", data.token);
-        navigate("/");
-      } else {
-        toast.error(data.message || "Login failed.");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      toast.error(`Network or server error: ${error}`);
+    // ✅ Only try to parse JSON if there's content
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      data = await response.json();
+    } else {
+      data = {};
     }
-  };
+
+    if (response.ok) {
+      toast.success("Login successful!");
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+      navigate("/");
+    } else {
+      toast.error(data.message || "Login failed.");
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    toast.error(`Network or server error: ${error.message}`);
+  }
+};
+
 
   return (
     <form
@@ -73,15 +85,15 @@ const Login = () => {
 
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="Username">Username</Label>
             <Input
-              id="username"
+              id="userName"
               type="text"
-              placeholder="Username"
-              {...register("username")}
+              placeholder="userName"
+              {...register("userName")}
             />
-            {errors.username && (
-              <p className="text-sm text-red-600">{errors.username.message}</p>
+            {errors.userName && (
+              <p className="text-sm text-red-600">{errors.userName.message}</p>
             )}
           </div>
 

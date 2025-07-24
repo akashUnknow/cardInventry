@@ -4,10 +4,17 @@ import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuContent,
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Routes
 import {
@@ -18,7 +25,6 @@ import {
   RouteLogin,
   RouteAdddgdata,
   RouteUpdate,
-  RouteIdsp,
 } from "@/helper/RouteName";
 
 const Layout = () => {
@@ -30,7 +36,10 @@ const Layout = () => {
           <NavigationMenuList className="flex gap-6">
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
-                <Link to={RouteIndex} className="font-semibold text-sm hover:text-blue-600">
+                <Link
+                  to={RouteIndex}
+                  className="font-semibold text-sm hover:text-blue-600"
+                >
                   Home
                 </Link>
               </NavigationMenuLink>
@@ -38,18 +47,23 @@ const Layout = () => {
 
             {/* Inventory Dropdown */}
             <NavigationMenuItem>
-             <NavigationMenuLink asChild>
-                <Link to={Routecardinventry} className="font-semibold text-sm hover:text-blue-600">
+              <NavigationMenuLink asChild>
+                <Link
+                  to={Routecardinventry}
+                  className="font-semibold text-sm hover:text-blue-600"
+                >
                   Inventory
                 </Link>
               </NavigationMenuLink>
-              
             </NavigationMenuItem>
 
             {/* Perso Card */}
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
-                <Link to={RoutePersoCard} className="font-semibold text-sm hover:text-blue-600">
+                <Link
+                  to={RoutePersoCard}
+                  className="font-semibold text-sm hover:text-blue-600"
+                >
                   Perso Card
                 </Link>
               </NavigationMenuLink>
@@ -58,7 +72,10 @@ const Layout = () => {
             {/* Add DG Data */}
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
-                <Link to={RouteAdddgdata} className="font-semibold text-sm hover:text-blue-600">
+                <Link
+                  to={RouteAdddgdata}
+                  className="font-semibold text-sm hover:text-blue-600"
+                >
                   Add DG Data
                 </Link>
               </NavigationMenuLink>
@@ -67,7 +84,10 @@ const Layout = () => {
             {/* Update */}
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
-                <Link to={RouteUpdate} className="font-semibold text-sm hover:text-blue-600">
+                <Link
+                  to={RouteUpdate}
+                  className="font-semibold text-sm hover:text-blue-600"
+                >
                   Update
                 </Link>
               </NavigationMenuLink>
@@ -76,17 +96,11 @@ const Layout = () => {
             {/* Login */}
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
-                <Link to={RouteLogin} className="font-semibold text-sm hover:text-blue-600">
+                <Link
+                  to={RouteLogin}
+                  className="font-semibold text-sm hover:text-blue-600"
+                >
                   Login
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-
-
-             <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link to={RouteIdsp} className="font-semibold text-sm hover:text-blue-600">
-                  IDSP
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>

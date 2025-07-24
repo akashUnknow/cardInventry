@@ -30,6 +30,7 @@ import {
   RouteBapGeneration,
   RouteBapReview,
   RouteBapHold,
+  RouteIdsp,
 } from "@/helper/RouteName";
 
 const Layout = () => {
@@ -114,7 +115,7 @@ const Layout = () => {
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
                 <Link
-                  to={RouteLogin}
+                  to={RouteIdsp}
                   className="font-semibold text-sm hover:text-blue-600"
                 >
                   IDSP

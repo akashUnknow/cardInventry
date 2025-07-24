@@ -37,7 +37,6 @@ const App = () => {
           <Route path={RouteBapReview} element={<BapUnderReview/>} />
           <Route path={RouteBapHold} element={<BapHold/>} />
           {/* Add more routes as needed */}
-          
         </Route>
         
       </Routes>

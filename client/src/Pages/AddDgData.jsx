@@ -118,7 +118,7 @@ const handleSubmit = async (e) => {
   ];
 
   return (
-    <div className="min-h-screen flex justify-center bg-gray-100 p-4">
+    <div className="min-h-screen flex justify-center bg-gray-100 px-4 pt-4 pb-20">
       <Card className="w-full max-w-6xl h-[90vh] flex flex-col">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-bold">

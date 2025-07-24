@@ -25,6 +25,11 @@ import {
   RouteLogin,
   RouteAdddgdata,
   RouteUpdate,
+  RouteBap,
+  RouteBapCompleted,
+  RouteBapGeneration,
+  RouteBapReview,
+  RouteBapHold,
 } from "@/helper/RouteName";
 
 const Layout = () => {
@@ -102,6 +107,45 @@ const Layout = () => {
                 >
                   Login
                 </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+            {/* IDSP*/}
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link
+                  to={RouteLogin}
+                  className="font-semibold text-sm hover:text-blue-600"
+                >
+                  IDSP
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+            {/* BAp*/}
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link
+                  to={RouteBap}
+                  className="font-semibold text-sm hover:text-blue-600"
+                >
+                  Bap
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+            {/* dropdown  */}
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>Open</DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <Link to={RouteBapCompleted}><DropdownMenuItem >completed</DropdownMenuItem></Link>
+                      <Link to={RouteBapGeneration}><DropdownMenuItem >under-generation</DropdownMenuItem></Link>
+                      <Link to={RouteBapReview}><DropdownMenuItem >under-review</DropdownMenuItem></Link>
+                      <Link to={RouteBapHold}><DropdownMenuItem >Hold</DropdownMenuItem></Link>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
               </NavigationMenuLink>
             </NavigationMenuItem>
           </NavigationMenuList>

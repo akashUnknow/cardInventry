@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardHeader,
@@ -16,87 +16,97 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { loginRequest, loginSuccess, loginFailure } from "@/redux/slices/authSlice";
 
-// Define Zod schema
 const loginSchema = z.object({
-  userName: z.string().min(1, "userName is required"),
+  userName: z.string().min(1, "Username is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(
+    localStorage.getItem("rememberMe") === "true"
+  );
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const {
     register,
     handleSubmit,
+    setFocus,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(loginSchema),
   });
 
-const handleForm = async (formData) => {
-  console.log(formData)
-  try {
-    const response = await fetch("http://localhost:8080/api/dg/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
+  useEffect(() => {
+    setFocus("userName");
+    if (isAuthenticated) navigate("/");
+  }, [isAuthenticated, navigate, setFocus]);
 
-    let data;
+  const handleForm = async (formData) => {
+    dispatch(loginRequest());
 
-    // ✅ Only try to parse JSON if there's content
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-      data = await response.json();
-    } else {
-      data = {};
-    }
-
-    if (response.ok) {
-      toast.success("Login successful!");
-      // Dispatch login success action
-      dispatch({
-        type: 'auth/loginSuccess',
-        payload: data.user, // Assuming the user object is returned in the response
+    try {
+      const response = await fetch("http://localhost:8080/api/dg/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-      }
-      navigate("/");
-    } else {
-      toast.error(data.message || "Login failed.");
-    }
-  } catch (error) {
-    console.error("Login error:", error);
-    toast.error(`Network or server error: ${error.message}`);
-  }
-};
 
+      const contentType = response.headers.get("content-type");
+      const data = contentType?.includes("application/json")
+        ? await response.json()
+        : {};
+
+      if (response.ok) {
+        dispatch(loginSuccess(data.user || {}));
+        toast.success("Login successful!");
+
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
+
+        if (rememberMe) {
+          localStorage.setItem("rememberMe", "true");
+        } else {
+          localStorage.removeItem("rememberMe");
+        }
+
+        navigate("/");
+      } else {
+        dispatch(loginFailure(data.message || "Login failed"));
+        toast.error(data.message || "Login failed");
+      }
+    } catch (error) {
+      dispatch(loginFailure(error.message));
+      toast.error(`Network error: ${error.message}`);
+    }
+  };
 
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
-      className="min-h-screen flex justify-center bg-gray-100 px-2 pt-20"
+      className="min-h-screen flex justify-center items-center bg-gray-100 px-2 pt-20"
     >
-      <Card className="w-full max-w-md p-6 shadow-xl rounded-2xl min-h-1/3 h-3/4">
+      <Card className="w-full max-w-md p-6 shadow-xl rounded-2xl">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold">Login to your account</CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-4">
+          {/* Username */}
           <div className="space-y-2">
-            <Label htmlFor="Username">Username</Label>
+            <Label htmlFor="userName">Username</Label>
             <Input
               id="userName"
               type="text"
-              placeholder="userName"
+              placeholder="Enter your username"
               {...register("userName")}
             />
             {errors.userName && (
@@ -104,6 +114,7 @@ const handleForm = async (formData) => {
             )}
           </div>
 
+          {/* Password */}
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <div className="relative">
@@ -126,17 +137,16 @@ const handleForm = async (formData) => {
             )}
           </div>
 
-          <div className="flex items-center justify-between pt-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="remember"
-                checked={rememberMe}
-                onCheckedChange={(checked) => setRememberMe(checked)}
-              />
-              <label htmlFor="remember" className="text-sm">
-                Remember me
-              </label>
-            </div>
+          {/* Remember Me */}
+          <div className="flex items-center space-x-2 pt-2">
+            <Checkbox
+              id="remember"
+              checked={rememberMe}
+              onCheckedChange={(checked) => setRememberMe(!!checked)}
+            />
+            <label htmlFor="remember" className="text-sm">
+              Remember me
+            </label>
           </div>
         </CardContent>
 

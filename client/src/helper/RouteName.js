@@ -1,14 +1,13 @@
-export const RouteIndex = '/'
-// helper/RouteName.js
-export const Routecardinventry = '/card-inventry' 
-export const RouteAddInventory= '/AddInventory'
-export const RoutePersoCard= '/PersoCard'
-export const RouteLogin= '/Login'
-export const RouteAdddgdata= '/add-dgdata'
-export const RouteUpdate= '/Update'
-export const RouteIdsp= '/idsp'
-export const RouteBap= '/bap'
-export const RouteBapCompleted= '/bap/completed'
-export const RouteBapGeneration= '/bap/under-generation'
-export const RouteBapReview= '/bap/under-review'
-export const RouteBapHold= '/bap/hold'
+export const RouteIndex = '/';
+export const RouteLogin = '/Login';
+export const Routecardinventry = '/card-inventry';
+export const RouteAddInventory = '/AddInventory';
+export const RoutePersoCard = '/PersoCard';
+export const RouteAdddgdata = '/add-dgdata';
+export const RouteUpdate = '/Update';
+export const RouteIdsp = '/idsp';
+export const RouteBap = '/bap';
+export const RouteBapCompleted = '/bap/completed';
+export const RouteBapGeneration = '/bap/under-generation';
+export const RouteBapReview = '/bap/under-review';
+export const RouteBapHold = '/bap/hold';

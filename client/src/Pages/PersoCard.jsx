@@ -152,7 +152,7 @@ const PersoCard = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-start justify-center min-h-screen mt-11">
       <Card className="w-[600px] p-6 shadow-lg bg-white">
         <CardHeader>
           <CardTitle className="text-center text-3xl font-bold">

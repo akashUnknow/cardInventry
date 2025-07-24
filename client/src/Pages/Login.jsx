@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useDispatch } from "react-redux";
 
 // Define Zod schema
 const loginSchema = z.object({
@@ -27,6 +28,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -59,6 +61,11 @@ const handleForm = async (formData) => {
 
     if (response.ok) {
       toast.success("Login successful!");
+      // Dispatch login success action
+      dispatch({
+        type: 'auth/loginSuccess',
+        payload: data.user, // Assuming the user object is returned in the response
+      });
       if (data.token) {
         localStorage.setItem("token", data.token);
       }

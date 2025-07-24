@@ -18,6 +18,7 @@ import {
   RouteLogin,
   RouteAdddgdata,
   RouteUpdate,
+  RouteIdsp,
 } from "@/helper/RouteName";
 
 const Layout = () => {
@@ -77,6 +78,15 @@ const Layout = () => {
               <NavigationMenuLink asChild>
                 <Link to={RouteLogin} className="font-semibold text-sm hover:text-blue-600">
                   Login
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+
+             <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link to={RouteIdsp} className="font-semibold text-sm hover:text-blue-600">
+                  IDSP
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>

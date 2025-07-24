@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from './Layout/Layout'
-import { RouteAddInventory, RouteAdddgdata, RouteIndex, RouteLogin, RoutePersoCard, RouteUpdate, Routecardinventry } from './helper/RouteName';
+import { RouteAddInventory, RouteAdddgdata, RouteIdsp, RouteIndex, RouteLogin, RoutePersoCard, RouteUpdate, Routecardinventry } from './helper/RouteName';
 import Index from './Pages/Index';
 import CardInventry from './Pages/CardInventry';
 import AddInventory from './Pages/AddInventory';
@@ -9,6 +9,7 @@ import PersoCard from './Pages/PersoCard';
 import Login from './Pages/Login';
 import AddDgData from './Pages/AddDgData';
 import Update from './Pages/Update';
+import IdspBap from './Pages/IdspBap';
 
 
 
@@ -24,6 +25,7 @@ const App = () => {
           <Route path={RouteLogin} element={<Login/>} />
           <Route path={RouteAdddgdata} element={<AddDgData/>} />
           <Route path={RouteUpdate} element={<Update/>} />
+          <Route path={RouteIdsp} element={<IdspBap/>} />
           {/* Add more routes as needed */}
           
         </Route>

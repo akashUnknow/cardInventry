@@ -66,6 +66,8 @@ const Login = () => {
 
       if (response.ok) {
         dispatch(loginSuccess(data.user || {}));
+        console.log("Login successful:", data);
+        
         toast.success("Login successful!");
 
         if (data.token) {
@@ -92,7 +94,7 @@ const Login = () => {
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
-      className="min-h-screen flex justify-center items-center bg-gray-100 px-2 pt-20"
+      className="min-h-screen flex justify-center items-center bg-gray-100"
     >
       <Card className="w-full max-w-md p-6 shadow-xl rounded-2xl">
         <CardHeader className="text-center">

@@ -42,7 +42,7 @@ const Bap = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/api/dg/add-card", {
+      const response = await fetch("", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formState),
@@ -100,16 +100,16 @@ const Bap = () => {
     { name: "OrderReceive", label: "Order Receive", type: "date" },
     { name: "SLAscheduledFinishDate", label: "SLA/ Scheduled", type: "date" },
     { name: "StartDate", label: "Start Date", type: "date" },
-    { name: "FinishDate", label: "Finish Date", type: "number" },
-    { name: "lagTime", label: "Factory" },
-    { name: "PreRequisitesStatus", label: "Pre Requisites" },
+    { name: "FinishDate", label: "Finish Date", type: "date" },
+    // { name: "lagTime", label: "Factory" },
+    // { name: "PreRequisitesStatus", label: "Pre Requisites" },
     { name: "Status", label: "Status" },
     { name: "Remarks", label: "Remarks" },
   ];
 
   const dropdownOptions = {
     Priority: ["High", "Medium", "Low"],
-    profile: ["Identical", "Major", "Minor", "Test Profile"],
+    DGcateg: ["Identical", "Major", "Minor", "Test Profile"],
     RequestType: ["Test Card", "DG Only"],
     PreRequisitesStatus: ["Completed", "In Progress", "Hold"],
     Status: ["In Progress", "Completed"],

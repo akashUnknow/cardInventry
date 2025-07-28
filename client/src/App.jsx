@@ -8,7 +8,8 @@ import {
   Routecardinventry, RouteAddInventory, RoutePersoCard,
   RouteAdddgdata, RouteUpdate,
   RouteIdsp, RouteBap, RouteBapCompleted,
-  RouteBapGeneration, RouteBapReview, RouteBapHold
+  RouteBapGeneration, RouteBapReview, RouteBapHold,
+  RouteNotAuth
 } from './helper/RouteName';
 
 import Index from './Pages/Index';
@@ -24,6 +25,7 @@ import BAPcompleted from './Pages/BAPcompleted';
 import BapUnderGeneration from './Pages/BapUnderGeneration';
 import BapUnderReview from './Pages/BapUnderReview';
 import BapHold from './Pages/BapHold';
+import NotAuthorized from './Pages/NotAuthorized';
 
 const App = () => (
   <BrowserRouter>
@@ -31,6 +33,7 @@ const App = () => (
       <Route element={<Layout />} path={RouteIndex}>
         <Route index element={<Index />} />
         <Route path={RouteLogin} element={<Login />} />
+        <Route path={RouteNotAuth} element={<NotAuthorized />} />
 
         {/* Protected routes */}
         <Route path={Routecardinventry} element={<ProtectedRoute><CardInventry /></ProtectedRoute>} />

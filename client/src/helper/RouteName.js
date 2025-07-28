@@ -11,3 +11,4 @@ export const RouteBapCompleted = '/bap/completed';
 export const RouteBapGeneration = '/bap/under-generation';
 export const RouteBapReview = '/bap/under-review';
 export const RouteBapHold = '/bap/hold';
+export const RouteNotAuth = '/not-authorized';

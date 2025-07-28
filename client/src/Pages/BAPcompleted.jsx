@@ -1,87 +1,86 @@
-import React, { useState } from "react"
+import React, { useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
   flexRender,
-} from "@tanstack/react-table"
-import { Card } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Button } from "@/components/ui/button"
-import { Pencil, Save, X } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+} from "@tanstack/react-table";
+import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { Pencil, Save, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { toast } from "react-toastify";
 
 const initialData = [
-  { id: "1", name: "Project A", status: "In Review", assignedTo: "Akash" },
-  { id: "2", name: "Project B", status: "Pending", assignedTo: "Ravi" },
-  { id: "3", name: "Project C", status: "Completed", assignedTo: "Neha" },
-]
+  {
+    fs: "FS-001",
+    profile: "Profile A",
+    status: "In Review",
+    configurator: "Akash",
+    comment: "Initial data",
+    edd: "2025-07-24",
+  },
+  {
+    fs: "FS-002",
+    profile: "Profile B",
+    status: "Pending",
+    configurator: "Ravi",
+    comment: "In progress",
+    edd: "2025-08-01",
+  },
+];
 
 const BAPcompleted = () => {
-  const [data, setData] = useState(initialData)
-  const [editRowId, setEditRowId] = useState(null)
-  const [editRowCopy, setEditRowCopy] = useState({})
+  const [data, setData] = useState(initialData);
+  const [editRowId, setEditRowId] = useState(null);
 
-  const handleEditClick = (row) => {
-    setEditRowId(row.original.id)
-    setEditRowCopy({ ...row.original })
-  }
-
-  const handleInputChange = (field, value) => {
-    setEditRowCopy((prev) => ({ ...prev, [field]: value }))
-  }
-
-  const handleSave = () => {
-    const updatedData = data.map((item) =>
-      item.id === editRowId ? editRowCopy : item
-    )
-    setData(updatedData)
-    setEditRowId(null)
-    toast.success("Row updated successfully!")
-  }
+  const handleSave = (rowId, updatedRow) => {
+    const newData = data.map((item) => (item.fs === rowId ? updatedRow : item));
+    setData(newData);
+    setEditRowId(null);
+    toast.success("Row updated successfully!");
+  };
 
   const handleCancel = () => {
-    setEditRowId(null)
-    setEditRowCopy({})
-    toast.info("Edit cancelled.")
-  }
+    setEditRowId(null);
+    toast.info("Edit cancelled.");
+  };
 
   const columns = [
     {
-      accessorKey: "id",
-      header: "ID",
+      accessorKey: "fs",
+      header: "FS",
       cell: ({ row }) =>
-        row.original.id === editRowId ? (
+        row.original.fs === editRowId ? (
           <Input
-            value={editRowCopy.id}
-            onChange={(e) => handleInputChange("id", e.target.value)}
+            defaultValue={row.original.fs}
+            onChange={(e) => (row.original.fs = e.target.value)}
           />
         ) : (
-          row.original.id
+          row.original.fs
         ),
     },
     {
-      accessorKey: "name",
-      header: "Project Name",
+      accessorKey: "profile",
+      header: "Profile",
       cell: ({ row }) =>
-        row.original.id === editRowId ? (
+        row.original.fs === editRowId ? (
           <Input
-            value={editRowCopy.name}
-            onChange={(e) => handleInputChange("name", e.target.value)}
+            defaultValue={row.original.profile}
+            onChange={(e) => (row.original.profile = e.target.value)}
           />
         ) : (
-          row.original.name
+          row.original.profile
         ),
     },
     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) =>
-        row.original.id === editRowId ? (
+        row.original.fs === editRowId ? (
           <select
-            value={editRowCopy.status}
-            onChange={(e) => handleInputChange("status", e.target.value)}
+            defaultValue={row.original.status}
+            onChange={(e) => (row.original.status = e.target.value)}
             className="w-full px-2 py-1 rounded border text-sm"
           >
             <option value="In Review">In Review</option>
@@ -93,27 +92,54 @@ const BAPcompleted = () => {
         ),
     },
     {
-      accessorKey: "assignedTo",
-      header: "Assigned To",
+      accessorKey: "configurator",
+      header: "Configurator",
       cell: ({ row }) =>
-        row.original.id === editRowId ? (
+        row.original.fs === editRowId ? (
           <Input
-            value={editRowCopy.assignedTo}
-            onChange={(e) => handleInputChange("assignedTo", e.target.value)}
+            defaultValue={row.original.configurator}
+            onChange={(e) => (row.original.configurator = e.target.value)}
           />
         ) : (
-          row.original.assignedTo
+          row.original.configurator
+        ),
+    },
+    {
+      accessorKey: "comment",
+      header: "Comment",
+      cell: ({ row }) =>
+        row.original.fs === editRowId ? (
+          <Input
+            defaultValue={row.original.comment}
+            onChange={(e) => (row.original.comment = e.target.value)}
+          />
+        ) : (
+          row.original.comment
+        ),
+    },
+    {
+      accessorKey: "edd",
+      header: "EDD",
+      cell: ({ row }) =>
+        row.original.fs === editRowId ? (
+          <Input
+            type="date"
+            defaultValue={row.original.edd}
+            onChange={(e) => (row.original.edd = e.target.value)}
+          />
+        ) : (
+          row.original.edd
         ),
     },
     {
       id: "actions",
       header: "Actions",
       cell: ({ row }) => {
-        const isEditing = row.original.id === editRowId
+        const isEditing = row.original.fs === editRowId;
         return isEditing ? (
           <div className="flex gap-2">
             <Button
-              onClick={handleSave}
+              onClick={() => handleSave(row.original.fs, row.original)}
               variant="outline"
               size="icon"
               className="text-green-600"
@@ -131,27 +157,27 @@ const BAPcompleted = () => {
           </div>
         ) : (
           <Button
-            onClick={() => handleEditClick(row)}
+            onClick={() => setEditRowId(row.original.fs)}
             variant="outline"
             size="icon"
             className="text-blue-600"
           >
             <Pencil className="w-4 h-4" />
           </Button>
-        )
+        );
       },
     },
-  ]
+  ];
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-  })
+  });
 
   return (
     <Card className="p-4">
-      <h2 className="text-xl font-bold mb-4">BAP - Completed</h2>
+      <h2 className="text-xl font-bold mb-4">IDSP Data - Completed</h2>
       <ScrollArea className="w-full overflow-auto">
         <table className="w-full text-sm border-collapse">
           <thead className="bg-gray-100">
@@ -162,10 +188,7 @@ const BAPcompleted = () => {
                     key={header.id}
                     className="border px-4 py-2 text-left font-medium"
                   >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
+                    {flexRender(header.column.columnDef.header, header.getContext())}
                   </th>
                 ))}
               </tr>
@@ -176,10 +199,7 @@ const BAPcompleted = () => {
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="border px-4 py-2">
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext()
-                    )}
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
               </tr>
@@ -188,7 +208,7 @@ const BAPcompleted = () => {
         </table>
       </ScrollArea>
     </Card>
-  )
-}
+  );
+};
 
-export default BAPcompleted
+export default BAPcompleted;

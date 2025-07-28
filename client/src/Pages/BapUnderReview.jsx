@@ -1,56 +1,130 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
   flexRender,
-} from "@tanstack/react-table"
-import { Card } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Button } from "@/components/ui/button"
-import { Pencil, Save, X } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
-
-const initialData = [
-  { id: "1", name: "Project A", status: "In Review", assignedTo: "Akash" },
-  { id: "2", name: "Project B", status: "Pending", assignedTo: "Ravi" },
-  { id: "3", name: "Project C", status: "Completed", assignedTo: "Neha" },
-]
+} from "@tanstack/react-table";
+import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { Pencil, Save, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const BapUnderReview = () => {
-  const [data, setData] = useState(initialData)
-  const [editRowId, setEditRowId] = useState(null)
-  const [editRowCopy, setEditRowCopy] = useState({})
+  const [data, setData] = useState([]);
+  const [editRowId, setEditRowId] = useState(null);
+  const [editRowCopy, setEditRowCopy] = useState({});
+
+  useEffect(() => {
+    fetchUnderReviewData();
+  }, []);
+
+  const fetchUnderReviewData = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/api/idsp/type?type=In Review"
+      );
+      const json = await response.json();
+
+      if (!response.ok) {
+        toast.error(json.message || "Failed to fetch data.");
+        return;
+      }
+
+      const formatted = json.map((item) => ({
+        id: item.fs,
+        name: item.profile,
+        assignedTo: item.configurator,
+        comment: item.comment,
+        edd: item.edd,
+        status: item.type,
+        partnerCode: item.partnerCode,
+        version: item.version,
+      }));
+
+      setData(formatted);
+    } catch (error) {
+      console.error("Error loading under-review data:", error);
+      toast.error("Error loading data.");
+    }
+  };
 
   const handleEditClick = (row) => {
-    setEditRowId(row.original.id)
-    setEditRowCopy({ ...row.original })
-  }
+    setEditRowId(row.original.id);
+    setEditRowCopy({ ...row.original });
+  };
 
   const handleInputChange = (field, value) => {
-    setEditRowCopy((prev) => ({ ...prev, [field]: value }))
-  }
+    setEditRowCopy((prev) => ({ ...prev, [field]: value }));
+  };
 
-  const handleSave = () => {
-    const updatedData = data.map((item) =>
-      item.id === editRowId ? editRowCopy : item
-    )
-    setData(updatedData)
-    setEditRowId(null)
-    toast.success("Row updated successfully!")
-  }
+  const handleSave = async () => {
+    try {
+      const payload = {
+        fs: editRowCopy.id,
+        profile: editRowCopy.name,
+        configurator: editRowCopy.assignedTo,
+        comment: editRowCopy.comment,
+        edd: editRowCopy.edd,
+        type: editRowCopy.status,
+        partnerCode: editRowCopy.partnerCode,
+        version: editRowCopy.version,
+      };
+
+      const response = await fetch(
+        "http://localhost:8080/api/idsp/update-by-fs",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        toast.error(json.message || "Failed to update profile.");
+        return;
+      }
+
+      const updatedItem = {
+        id: json.data.fs,
+        name: json.data.profile,
+        assignedTo: json.data.configurator,
+        comment: json.data.comment,
+        edd: json.data.edd,
+        status: json.data.type,
+        partnerCode: json.data.partnerCode,
+        version: json.data.version,
+      };
+
+      const updatedData = data.map((item) =>
+        item.id === editRowId ? updatedItem : item
+      );
+
+      setData(updatedData);
+      setEditRowId(null);
+      toast.success(json.message || "Updated successfully!");
+    } catch (error) {
+      console.error("Update failed:", error);
+      toast.error("Error updating row.");
+    }
+  };
 
   const handleCancel = () => {
-    setEditRowId(null)
-    setEditRowCopy({})
-    toast.info("Edit cancelled.")
-  }
+    setEditRowId(null);
+    setEditRowCopy({});
+    toast.info("Edit cancelled.");
+  };
 
   const columns = [
     {
       accessorKey: "id",
-      header: "ID",
+      header: "FS No",
       cell: ({ row }) =>
         row.original.id === editRowId ? (
           <Input
@@ -63,7 +137,7 @@ const BapUnderReview = () => {
     },
     {
       accessorKey: "name",
-      header: "Project Name",
+      header: "Profile",
       cell: ({ row }) =>
         row.original.id === editRowId ? (
           <Input
@@ -72,6 +146,46 @@ const BapUnderReview = () => {
           />
         ) : (
           row.original.name
+        ),
+    },
+    {
+      accessorKey: "assignedTo",
+      header: "Configurator",
+      cell: ({ row }) =>
+        row.original.id === editRowId ? (
+          <Input
+            value={editRowCopy.assignedTo}
+            onChange={(e) => handleInputChange("assignedTo", e.target.value)}
+          />
+        ) : (
+          row.original.assignedTo
+        ),
+    },
+    {
+      accessorKey: "comment",
+      header: "Comment",
+      cell: ({ row }) =>
+        row.original.id === editRowId ? (
+          <Input
+            value={editRowCopy.comment}
+            onChange={(e) => handleInputChange("comment", e.target.value)}
+          />
+        ) : (
+          row.original.comment
+        ),
+    },
+    {
+      accessorKey: "edd",
+      header: "EDD",
+      cell: ({ row }) =>
+        row.original.id === editRowId ? (
+          <Input
+            type="date"
+            value={editRowCopy.edd}
+            onChange={(e) => handleInputChange("edd", e.target.value)}
+          />
+        ) : (
+          row.original.edd
         ),
     },
     {
@@ -87,29 +201,17 @@ const BapUnderReview = () => {
             <option value="In Review">In Review</option>
             <option value="Pending">Pending</option>
             <option value="Completed">Completed</option>
+            <option value="Hold">Hold</option>
           </select>
         ) : (
           row.original.status
         ),
     },
     {
-      accessorKey: "assignedTo",
-      header: "Assigned To",
-      cell: ({ row }) =>
-        row.original.id === editRowId ? (
-          <Input
-            value={editRowCopy.assignedTo}
-            onChange={(e) => handleInputChange("assignedTo", e.target.value)}
-          />
-        ) : (
-          row.original.assignedTo
-        ),
-    },
-    {
       id: "actions",
       header: "Actions",
       cell: ({ row }) => {
-        const isEditing = row.original.id === editRowId
+        const isEditing = row.original.id === editRowId;
         return isEditing ? (
           <div className="flex gap-2">
             <Button
@@ -138,16 +240,16 @@ const BapUnderReview = () => {
           >
             <Pencil className="w-4 h-4" />
           </Button>
-        )
+        );
       },
     },
-  ]
+  ];
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-  })
+  });
 
   return (
     <Card className="p-4">
@@ -176,10 +278,7 @@ const BapUnderReview = () => {
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="border px-4 py-2">
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext()
-                    )}
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
               </tr>
@@ -188,7 +287,7 @@ const BapUnderReview = () => {
         </table>
       </ScrollArea>
     </Card>
-  )
-}
+  );
+};
 
-export default BapUnderReview
+export default BapUnderReview;

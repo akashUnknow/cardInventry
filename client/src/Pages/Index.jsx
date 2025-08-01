@@ -20,24 +20,15 @@ import {
   Legend,
 } from "chart.js";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const ChartDashboard = () => {
   const [category, setCategory] = useState("All");
   const [user, setUser] = useState("All");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [dgData, setDgData] = useState({
-    labels: [],
-    datasets: [],
-  });
+  const [dgData, setDgData] = useState({ labels: [], datasets: [] });
+  const [bapData, setBapData] = useState({ labels: [], datasets: [] });
 
   const options = {
     responsive: true,
@@ -47,38 +38,52 @@ const ChartDashboard = () => {
     },
   };
 
-  // 📦 Fetch default yearly data
+  // Fetch default (yearly) chart data for DG and BAP
   useEffect(() => {
     const fetchDefaultYearData = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:8080/api/dg/dg-inventory/monthly-count/2024"
-        );
-        const data = await response.json();
-
-        const labels = data.map((item) => item.monthName.trim());
-        const values = data.map((item) => item.count);
-
+        // DG default data
+        const dgRes = await fetch("http://localhost:8080/api/dg/dg-inventory/monthly-count/2024");
+        const dgJson = await dgRes.json();
+        const dgLabels = dgJson.map((item) => item.monthName.trim());
+        const dgValues = dgJson.map((item) => item.count);
         setDgData({
-          labels,
+          labels: dgLabels,
           datasets: [
             {
               label: "Data Generation",
-              data: values,
+              data: dgValues,
               backgroundColor: "rgba(59, 130, 246, 0.7)",
               borderRadius: 8,
             },
           ],
         });
+
+        // BAP default data
+        const bapRes = await fetch("http://localhost:8080/api/bap/monthly-count/2025");
+        const bapJson = await bapRes.json();
+        const bapLabels = bapJson.map((item) => item.monthName.trim());
+        const bapValues = bapJson.map((item) => item.count);
+        setBapData({
+          labels: bapLabels,
+          datasets: [
+            {
+              label: "BAP Profiles",
+              data: bapValues,
+              backgroundColor: "rgba(34, 197, 94, 0.7)",
+              borderRadius: 8,
+            },
+          ],
+        });
       } catch (error) {
-        console.error("Failed to fetch chart data:", error);
+        console.error("Failed to fetch default chart data:", error);
       }
     };
 
     fetchDefaultYearData();
   }, []);
 
-  // 📦 Fetch filtered data by date
+  // Handle filter by date range
   const handleFilter = async () => {
     if (!dateFrom || !dateTo) {
       alert("Please select both From and To dates.");
@@ -86,21 +91,35 @@ const ChartDashboard = () => {
     }
 
     try {
-      const response = await fetch(
+      // DG filtered data
+      const dgRes = await fetch(
         `http://localhost:8080/api/dg/dg-inventory/monthly-count?startDate=${dateFrom}&endDate=${dateTo}`
       );
-      const data = await response.json();
-
-      const labels = data.map((item) => item.monthName.trim());
-      const values = data.map((item) => item.count);
-
+      const dgJson = await dgRes.json();
       setDgData({
-        labels,
+        labels: dgJson.map((d) => d.monthName.trim()),
         datasets: [
           {
             label: "Data Generation",
-            data: values,
+            data: dgJson.map((d) => d.count),
             backgroundColor: "rgba(59, 130, 246, 0.7)",
+            borderRadius: 8,
+          },
+        ],
+      });
+
+      // BAP filtered data
+      const bapRes = await fetch(
+        `http://localhost:8080/api/bap/bap/monthly-count?startDate=${dateFrom}&endDate=${dateTo}`
+      );
+      const bapJson = await bapRes.json();
+      setBapData({
+        labels: bapJson.map((d) => d.monthName.trim()),
+        datasets: [
+          {
+            label: "BAP Profiles",
+            data: bapJson.map((d) => d.count),
+            backgroundColor: "rgba(34, 197, 94, 0.7)",
             borderRadius: 8,
           },
         ],
@@ -115,7 +134,6 @@ const ChartDashboard = () => {
       {/* Filters */}
       <Card className="max-w-7xl mx-auto p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
-          {/* Category Filter */}
           <div>
             <label className="block text-sm font-medium mb-1">Category</label>
             <Select value={category} onValueChange={setCategory}>
@@ -130,7 +148,6 @@ const ChartDashboard = () => {
             </Select>
           </div>
 
-          {/* User Filter */}
           <div>
             <label className="block text-sm font-medium mb-1">User</label>
             <Select value={user} onValueChange={setUser}>
@@ -145,27 +162,16 @@ const ChartDashboard = () => {
             </Select>
           </div>
 
-          {/* Date From */}
           <div>
             <label className="block text-sm font-medium mb-1">From</label>
-            <Input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-            />
+            <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
           </div>
 
-          {/* Date To */}
           <div>
             <label className="block text-sm font-medium mb-1">To</label>
-            <Input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-            />
+            <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
           </div>
 
-          {/* Filter Button */}
           <div className="flex items-end">
             <Button onClick={handleFilter} className="w-full">
               Filter
@@ -178,7 +184,7 @@ const ChartDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-7xl mx-auto">
         <Card className="h-full">
           <CardHeader>
-            <CardTitle>Data Generation</CardTitle>
+            <CardTitle>Data Generation (DG)</CardTitle>
           </CardHeader>
           <CardContent className="h-[450px] w-full">
             <div className="h-full w-full">
@@ -189,24 +195,11 @@ const ChartDashboard = () => {
 
         <Card className="h-full">
           <CardHeader>
-            <CardTitle>BAP (Static Example)</CardTitle>
+            <CardTitle>BAP Monthly Count</CardTitle>
           </CardHeader>
           <CardContent className="h-[450px] w-full">
             <div className="h-full w-full">
-              <Bar
-                data={{
-                  labels: ["Jan", "Feb", "Mar", "Apr", "May"],
-                  datasets: [
-                    {
-                      label: "BAP",
-                      data: [700, 1100, 500, 800, 300],
-                      backgroundColor: "rgba(34, 197, 94, 0.7)",
-                      borderRadius: 8,
-                    },
-                  ],
-                }}
-                options={options}
-              />
+              <Bar data={bapData} options={options} />
             </div>
           </CardContent>
         </Card>

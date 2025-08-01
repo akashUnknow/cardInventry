@@ -11,39 +11,70 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 
+const API_BASE = "http://localhost:8080/api/bap";
+
 const Bap = () => {
   const navigate = useNavigate();
-  const [formState, setFormState] = useState({
+
+  const defaultFormState = {
     orderNo: "",
-    SAPno: "",
-    CPSSno: "",
-    DGcateg: "",
-    Priority: "",
+    sapNo: "",
+    cpssNo: "",
+    dgCateg: "",
+    priority: "",
     profile: "",
-    RequestType: "",
-    Developer: "",
-    Validator: "",
-    ValidationStatus: "",
-    OrderReceive: "",
-    SLAscheduledFinishDate: "",
-    StartDate: "",
-    FinishDate: "",
-    lagTime: "",
-    PreRequisitesStatus: "",
-    Status: "",
-    Remarks: "",
-    userName: "akash",
-  });
+    requestType: "",
+    developer: "",
+    validator: "",
+    validationStatus: "",
+    orderReceive: "",
+    slascheduledFinishDate: "",
+    startDate: "",
+    finishDate: "",
+    status: "",
+    remarks: "",
+  };
+
+  const [formState, setFormState] = useState(defaultFormState);
+  const [isExisting, setIsExisting] = useState(false);
 
   const handleChange = (key, value) => {
     setFormState((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleOrderNoEnter = async (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      try {
+        const res = await fetch(`${API_BASE}/search?orderNo=${formState.orderNo}`);
+        if (!res.ok) throw new Error("Not Found");
+        const data = await res.json();
+
+        if (data?.orderNo) {
+          toast.success("Order found. Form pre-filled.");
+          setFormState(data);
+          setIsExisting(true);
+        } else {
+          toast.info("No existing order found.");
+          setIsExisting(false);
+        }
+      } catch (error) {
+        toast.error("Order not found or API error: " + error.message);
+        setIsExisting(false);
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const endpoint = isExisting
+      ? `${API_BASE}/update-by-orderNo`
+      : `${API_BASE}/add-profile`;
+    const method = isExisting ? "PUT" : "POST";
+
     try {
-      const response = await fetch("", {
-        method: "POST",
+      const response = await fetch(endpoint, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formState),
       });
@@ -51,68 +82,45 @@ const Bap = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.message || "Failed to save data");
-        console.error("Backend error:", data);
+        toast.error(data.message || "Failed to save");
         return;
       }
 
-      toast.success("Data saved successfully!");
+      toast.success(isExisting ? "Profile updated successfully" : "Profile added successfully");
+      setFormState(defaultFormState);
+      setIsExisting(false);
       navigate("/");
-
-      setFormState({
-        orderNo: "",
-        SAPno: "",
-        CPSSno: "",
-        DGcateg: "",
-        Priority: "",
-        profile: "",
-        RequestType: "",
-        Developer: "",
-        Validator: "",
-        ValidationStatus: "",
-        OrderReceive: "",
-        SLAscheduledFinishDate: "",
-        StartDate: "",
-        FinishDate: "",
-        lagTime: "",
-        PreRequisitesStatus: "",
-        Status: "",
-        Remarks: "",
-        userName: "akash",
-      });
     } catch (error) {
-      console.error("Network or JSON error:", error);
-      toast.error("Something went wrong!");
+      toast.error("Network or server error");
+      console.error(error);
     }
   };
 
   const fields = [
     { name: "orderNo", label: "Order No." },
-    { name: "SAPno", label: "SAP No" },
-    { name: "CPSSno", label: "CPSS No" },
-    { name: "DGcateg", label: "DG Categ" },
-    { name: "Priority", label: "Priority" },
+    { name: "sapNo", label: "SAP No" },
+    { name: "cpssNo", label: "CPSS No" },
+    { name: "dgCateg", label: "DG Categ" },
+    { name: "priority", label: "Priority" },
     { name: "profile", label: "Profile Name" },
-    { name: "RequestType", label: "Request Type" },
-    { name: "Developer", label: "Developer" },
-    { name: "Validator", label: "Validator" },
-    { name: "ValidationStatus", label: "Validation Status" },
-    { name: "OrderReceive", label: "Order Receive", type: "date" },
-    { name: "SLAscheduledFinishDate", label: "SLA/ Scheduled", type: "date" },
-    { name: "StartDate", label: "Start Date", type: "date" },
-    { name: "FinishDate", label: "Finish Date", type: "date" },
-    // { name: "lagTime", label: "Factory" },
-    // { name: "PreRequisitesStatus", label: "Pre Requisites" },
-    { name: "Status", label: "Status" },
-    { name: "Remarks", label: "Remarks" },
+    { name: "requestType", label: "Request Type" },
+    { name: "developer", label: "Developer" },
+    { name: "validator", label: "Validator" },
+    { name: "validationStatus", label: "Validation Status" },
+    { name: "orderReceive", label: "Order Receive", type: "date" },
+    { name: "slascheduledFinishDate", label: "SLA / Scheduled", type: "date" },
+    { name: "startDate", label: "Start Date", type: "date" },
+    { name: "finishDate", label: "Finish Date", type: "date" },
+    { name: "status", label: "Status" },
+    { name: "remarks", label: "Remarks" },
   ];
 
   const dropdownOptions = {
-    Priority: ["High", "Medium", "Low"],
-    DGcateg: ["Identical", "Major", "Minor", "Test Profile"],
-    RequestType: ["Test Card", "DG Only"],
-    PreRequisitesStatus: ["Completed", "In Progress", "Hold"],
-    Status: ["In Progress", "Completed"],
+    priority: ["High", "Medium", "Low"],
+    dgCateg: ["Identical", "Major", "Minor", "Test Profile", "Profile Creation"],
+    requestType: ["New", "DG Only", "Test Card"],
+    validationStatus: ["Pending", "Validated"],
+    status: ["In Progress", "Completed", "Under Review"],
   };
 
   return (
@@ -137,9 +145,11 @@ const Bap = () => {
                   <select
                     value={formState[name]}
                     onChange={(e) => handleChange(name, e.target.value)}
-                    className="border rounded px-2 py-1 text-sm"
+                    className={`border rounded px-2 py-1 text-sm ${
+                      isExisting ? "bg-green-100" : ""
+                    }`}
                   >
-                    <option value="">Select {label.toLowerCase()}</option>
+                    <option value="">Select {label}</option>
                     {dropdownOptions[name].map((option) => (
                       <option key={option} value={option}>
                         {option}
@@ -151,7 +161,9 @@ const Bap = () => {
                     type={type}
                     value={formState[name]}
                     onChange={(e) => handleChange(name, e.target.value)}
+                    onKeyDown={name === "orderNo" ? handleOrderNoEnter : undefined}
                     placeholder={label}
+                    className={isExisting ? "bg-green-100" : ""}
                   />
                 )}
               </div>
@@ -163,9 +175,11 @@ const Bap = () => {
           <div className="flex justify-center gap-4">
             <Button
               onClick={handleSubmit}
-              className="bg-blue-600 hover:bg-blue-500"
+              className={`${
+                isExisting ? "bg-yellow-500 hover:bg-yellow-400" : "bg-blue-600 hover:bg-blue-500"
+              }`}
             >
-              Save
+              {isExisting ? "Update" : "Save"}
             </Button>
             <Link to="/">
               <Button variant="destructive">Cancel</Button>

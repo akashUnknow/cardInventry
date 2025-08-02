@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const BapUnderGeneration = () => {
+  const API_BASE = import.meta.env.VITE_API_URL;
   const [data, setData] = useState([]);
   const [editRowId, setEditRowId] = useState(null);
   const [editRowCopy, setEditRowCopy] = useState({});
@@ -24,7 +25,7 @@ const BapUnderGeneration = () => {
   const fetchPendingData = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/api/idsp/type?type=Pending"
+        `${API_BASE}/idsp/type?type=Pending`
       );
       const json = await response.json();
 
@@ -74,7 +75,7 @@ const BapUnderGeneration = () => {
       };
 
       const response = await fetch(
-        "http://localhost:8080/api/idsp/update-by-fs",
+        `${API_BASE}/api/idsp/update-by-fs`,
         {
           method: "PUT",
           headers: {

@@ -23,6 +23,7 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const ChartDashboard = () => {
+  const API_BASE = import.meta.env.VITE_API_URL;
   const [category, setCategory] = useState("All");
   const [user, setUser] = useState("All");
   const [dateFrom, setDateFrom] = useState("");
@@ -43,7 +44,7 @@ const ChartDashboard = () => {
     const fetchDefaultYearData = async () => {
       try {
         // DG default data
-        const dgRes = await fetch("http://localhost:8080/api/dg/dg-inventory/monthly-count/2024");
+        const dgRes = await fetch(`${API_BASE}/api/dg/dg-inventory/monthly-count/2024`);
         const dgJson = await dgRes.json();
         const dgLabels = dgJson.map((item) => item.monthName.trim());
         const dgValues = dgJson.map((item) => item.count);
@@ -60,7 +61,7 @@ const ChartDashboard = () => {
         });
 
         // BAP default data
-        const bapRes = await fetch("http://localhost:8080/api/bap/monthly-count/2025");
+        const bapRes = await fetch(`${API_BASE}/api/bap/monthly-count/2025`);
         const bapJson = await bapRes.json();
         const bapLabels = bapJson.map((item) => item.monthName.trim());
         const bapValues = bapJson.map((item) => item.count);
@@ -93,7 +94,7 @@ const ChartDashboard = () => {
     try {
       // DG filtered data
       const dgRes = await fetch(
-        `http://localhost:8080/api/dg/dg-inventory/monthly-count?startDate=${dateFrom}&endDate=${dateTo}`
+        `${API_BASE}/api/dg/dg-inventory/monthly-count?startDate=${dateFrom}&endDate=${dateTo}`
       );
       const dgJson = await dgRes.json();
       setDgData({
@@ -110,7 +111,7 @@ const ChartDashboard = () => {
 
       // BAP filtered data
       const bapRes = await fetch(
-        `http://localhost:8080/api/bap/bap/monthly-count?startDate=${dateFrom}&endDate=${dateTo}`
+        `${API_BASE}/api/bap/bap/monthly-count?startDate=${dateFrom}&endDate=${dateTo}`
       );
       const bapJson = await bapRes.json();
       setBapData({

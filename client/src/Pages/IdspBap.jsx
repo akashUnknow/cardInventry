@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 
 const IdspBap = () => {
+  const API_BASE = import.meta.env.VITE_API_URL;
   // const navigate = useNavigate();
   const [formState, setFormState] = useState({
     Profile: "",
@@ -37,7 +38,7 @@ const IdspBap = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/idsp/search?fs=${formState.FSno}`
+        `${API_BASE}/api/idsp/search?fs=${formState.FSno}`
       );
 
       if (!response.ok) {

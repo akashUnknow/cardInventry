@@ -74,6 +74,7 @@ const PersoCard = () => {
     "Zeta 480",
     "Zeta 132",
   ];
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   const formFactors = ["TRI", "2FF", "3FF", "4FF", "MFF2", "B4"];
 
@@ -129,7 +130,7 @@ const PersoCard = () => {
       }
 
       const response = await fetch(
-        "http://localhost:8080/api/cards/perso-card",
+        `${API_BASE}/api/cards/perso-card`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -152,8 +153,8 @@ const PersoCard = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center bg-gray-100 px-4 pt-4 pb-20">
-      <Card className="w-[600px] p-6 shadow-lg bg-white">
+    <div className="flex justify-center mt-[20px] bg-gray-100 min-h-[calc(100vh-20vh)]">
+      <Card className="w-[600px] p-6 shadow-lg bg-white h-[calc(100vh-20vh)]">
         <CardHeader>
           <CardTitle className="text-center text-3xl font-bold">
             Perso Card Details

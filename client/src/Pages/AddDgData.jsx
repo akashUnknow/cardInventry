@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import {
   Card,
-  CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -10,89 +9,87 @@ import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
+const API_BASE = import.meta.env.VITE_API_URL;
+
+// ✅ Zod schema
+const dgFormSchema = z.object({
+  month: z.string().min(1, "Month is required"),
+  orderNo: z.string().min(1, "Order No. is required"),
+  gdIndia: z.string().min(1, "GDINDIA Internal is required"),
+  salesSub: z.string().min(1, "Sales SUB is required"),
+  orderDate: z.string().min(1, "Order Date is required"),
+  customerDelivery: z.string().min(1, "Customer Delivery is required"),
+  schedule: z.string().min(1, "Schedule is required"),
+  profileData: z.string().min(1, "Profile Data is required"),
+  lagTime: z.string().min(1, "Lag Time is required"),
+  customer: z.string().min(1, "Customer is required"),
+  profile: z.string().min(1, "Profile is required"),
+  reference: z.string().min(1, "Reference is required"),
+  orderDetails: z.string().min(1, "Order Details is required"),
+  status: z.enum(["in-progress", "completed"], {
+    errorMap: () => ({ message: "Status is required" }),
+  }),
+  qty: z.string().min(1, "Quantity is required"),
+  factory: z.string().min(1, "Factory is required"),
+  processor: z.string().min(1, "Processor is required"),
+  validator: z.string().min(1, "Validator is required"),
+  response: z.string().min(1, "Response is required"),
+  userName: z.string().min(1, "Username is required"),
+  arff: z.string().min(1, "ARFF/Voucher Upload is required"),
+});
 
 const AddDgData = () => {
   const navigate = useNavigate();
-  const [formState, setFormState] = useState({
-    month: "",
-    orderNo: "",
-    gdIndia: "",
-    salesSub: "",
-    orderDate: "",
-    customerDelivery: "",
-    schedule: "",
-    profileData: "",
-    lagTime: "",
-    customer: "",
-    profile: "",
-    reference: "",
-    orderDetails: "",
-    status: "",
-    qty: "",
-    factory: "",
-    processor: "",
-    validator: "",
-    response: "",
-    userName: "akash", // prefilled as per your example
-    arff: "",
+  const userName = useSelector((state) => state.auth.user); // ✅ from Redux
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    reset,
+  } = useForm({
+    resolver: zodResolver(dgFormSchema),
   });
 
-  const handleChange = (key, value) => {
-    setFormState((prev) => ({ ...prev, [key]: value }));
-  };
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  try {
-    const response = await fetch("http://localhost:8080/api/dg/add-card", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formState),
-    });
-
-    const data = await response.json(); // 👈 always parse JSON
-
-    if (!response.ok) {
-      toast.error(data.message || "Failed to save data");
-      console.error("Backend error:", data);
-      return;
+  // set userName when available
+  useEffect(() => {
+    if (userName) {
+      setValue("userName", userName);
     }
+  }, [userName, setValue]);
 
-    toast.success("Data saved successfully!");
-    navigate("/");
+  const onFormSubmit = async (data) => {
+    try {
+      const response = await fetch(`${API_BASE}/dg/add-card`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    // Reset form
-    setFormState({
-      month: "",
-      orderNo: "",
-      gdIndia: "",
-      salesSub: "",
-      orderDate: "",
-      customerDelivery: "",
-      schedule: "",
-      profileData: "",
-      lagTime: "",
-      customer: "",
-      profile: "",
-      reference: "",
-      orderDetails: "",
-      status: "",
-      qty: "",
-      factory: "",
-      processor: "",
-      validator: "",
-      response: "",
-      userName: "akash",
-      arff: "",
-    });
-  } catch (error) {
-    console.error("Network or JSON error:", error);
-    toast.error("Something went wrong!");
-  }
-};
+      const result = await response.json();
+
+      if (!response.ok) {
+        toast.error(result.message || "Failed to save data");
+        return;
+      }
+
+      toast.success("Data saved successfully!");
+      reset();
+      navigate("/");
+    } catch (error) {
+      console.error("Submit Error:", error);
+      toast.error("Something went wrong!");
+    }
+  };
 
   const fields = [
     { name: "month", label: "Month" },
@@ -128,17 +125,19 @@ const handleSubmit = async (e) => {
 
         <div className="overflow-y-auto px-6">
           <form
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onFormSubmit)}
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
           >
+            {/* Hidden userName input */}
+            <Input type="hidden" {...register("userName")} />
+
             {fields.map(({ name, label, type = "text" }) => (
               <div key={name} className="flex flex-col gap-1">
-                <label className="font-medium">{label}:</label>
+                <label className="font-small">{label}:</label>
 
                 {name === "status" ? (
                   <select
-                    value={formState.status}
-                    onChange={(e) => handleChange("status", e.target.value)}
+                    {...register(name)}
                     className="border rounded px-2 py-1 text-sm"
                   >
                     <option value="">Select status</option>
@@ -148,10 +147,15 @@ const handleSubmit = async (e) => {
                 ) : (
                   <Input
                     type={type}
-                    value={formState[name]}
-                    onChange={(e) => handleChange(name, e.target.value)}
+                    {...register(name)}
                     placeholder={label}
                   />
+                )}
+
+                {errors[name] && (
+                  <p className="text-sm text-red-500">
+                    {errors[name].message}
+                  </p>
                 )}
               </div>
             ))}
@@ -161,7 +165,7 @@ const handleSubmit = async (e) => {
         <CardFooter className="flex flex-col gap-4 mt-auto py-4">
           <div className="flex justify-center gap-4">
             <Button
-              onClick={handleSubmit}
+              onClick={handleSubmit(onFormSubmit)}
               className="bg-blue-600 hover:bg-blue-500"
             >
               Save
@@ -170,7 +174,7 @@ const handleSubmit = async (e) => {
               <Button variant="destructive">Cancel</Button>
             </Link>
           </div>
-          <p className="text-center text-sm text-gray-400">akash</p>
+          <p className="text-center text-sm text-gray-400">{userName}</p>
         </CardFooter>
       </Card>
     </div>

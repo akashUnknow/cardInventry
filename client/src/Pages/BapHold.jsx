@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const BapHold = () => {
+  const API_BASE = import.meta.env.VITE_API_URL;
   const [data, setData] = useState([]);
   const [editRowId, setEditRowId] = useState(null);
   const [editRowCopy, setEditRowCopy] = useState({});
@@ -24,7 +25,7 @@ const BapHold = () => {
   const fetchHoldData = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/api/idsp/type?type=Hold"
+        `${API_BASE}/idsp/type?type=Hold`
       );
       const json = await response.json();
 
@@ -74,7 +75,7 @@ const BapHold = () => {
       };
 
       const response = await fetch(
-        "http://localhost:8080/api/idsp/update-by-fs",
+        `${API_BASE}/idsp/update-by-fs`,
         {
           method: "PUT",
           headers: {

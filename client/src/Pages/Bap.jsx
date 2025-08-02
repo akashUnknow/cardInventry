@@ -11,7 +11,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 
-const API_BASE = "http://localhost:8080/api/bap";
+// const API_BASE = "http://localhost:8080/api/bap";\
+const API_BASE = import.meta.env.VITE_API_URL + "/api/bap"; // Adjust this to your actual API base URL
 
 const Bap = () => {
   const navigate = useNavigate();

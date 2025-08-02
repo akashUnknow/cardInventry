@@ -25,6 +25,7 @@ const loginSchema = z.object({
 });
 
 const Login = () => {
+  const API_BASE = import.meta.env.VITE_API_URL;
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(
     localStorage.getItem("rememberMe") === "true"
@@ -51,7 +52,7 @@ const Login = () => {
     dispatch(loginRequest());
 
     try {
-      const response = await fetch("http://localhost:8080/api/dg/login", {
+      const response = await fetch(`${API_BASE}/api/dg/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

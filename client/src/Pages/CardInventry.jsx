@@ -12,6 +12,7 @@ import { RouteAddInventory, RoutePersoCard } from "@/helper/RouteName";
 import { toast } from "react-toastify";
 
 const CardInventry = () => {
+  const API_BASE = import.meta.env.VITE_API_URL;
   const [selectedDescription, setSelectedDescription] = useState("");
   const [selectedFormFactor, setSelectedFormFactor] = useState("");
   const [cardCount, setCardCount] = useState(null);
@@ -94,7 +95,7 @@ const CardInventry = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/cards/search?description=${encodeURIComponent(
+        `${API_BASE}/api/cards/search?description=${encodeURIComponent(
           selectedDescription
         )}`,
         {
@@ -118,8 +119,8 @@ const CardInventry = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <Card className="w-[900px] shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <div className="flex justify-center mt-[20px] bg-gray-100 min-h-[calc(100vh-20vh)] ">
+      <Card className="w-[900px] shadow-lg hover:shadow-xl h-[calc(100vh-65vh)] transition-shadow duration-300 ">
         <CardHeader>
           <CardTitle className="text-center text-3xl font-bold">
             Card Inventory

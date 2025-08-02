@@ -31,6 +31,7 @@ const Update = () => {
     processor: "",
     validator: "",
   });
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   const handleChange = (key, value) => {
     setFormState((prev) => ({ ...prev, [key]: value }));
@@ -63,7 +64,7 @@ const Update = () => {
     e.preventDefault();
     console.log("Submitted", formState);
     try {
-      const response = await fetch("http://localhost:8080/api/dg/update-by-gdindia", {
+      const response = await fetch(`${API_BASE}/api/dg/update-by-gdindia`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

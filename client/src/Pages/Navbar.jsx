@@ -79,7 +79,7 @@ const Navbar = () => {
             </NavigationMenuItem>
 
             {/* Perso Card */}
-            <NavigationMenuItem>
+            {/* <NavigationMenuItem>
               <NavigationMenuLink asChild>
                 <Link
                   to={RoutePersoCard}
@@ -88,7 +88,7 @@ const Navbar = () => {
                   Perso Card
                 </Link>
               </NavigationMenuLink>
-            </NavigationMenuItem>
+            </NavigationMenuItem> */}
 
             {/* Add DG Data */}
             <NavigationMenuItem>

@@ -13,6 +13,7 @@ import { Routecardinventry } from "@/helper/RouteName";
 import { toast } from "react-toastify";
 
 const AddInventory = () => {
+  const API_BASE = import.meta.env.VITE_API_URL;
   const [cardDescription, setCardDescription] = useState("");
   const [formFactor, setFormFactor] = useState("");
   const [quantity, setQuantity] = useState("");
@@ -94,7 +95,7 @@ const AddInventory = () => {
     console.log("Form Data:", data);
 
     try {
-      const response = await fetch("http://localhost:8080/api/cards/add-card", {
+      const response = await fetch(`${API_BASE}/api/cards/add-card`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -115,8 +116,8 @@ const AddInventory = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <Card className="w-[600px] p-6 shadow-lg bg-white">
+    <div className="flex justify-center mt-[20px] bg-gray-100 min-h-[calc(100vh-20vh)]">
+      <Card className="w-[600px] p-6 shadow-lg bg-white h-[calc(100vh-55vh)]">
         <CardHeader>
           <CardTitle className="text-center text-3xl font-bold">
             Add Inventory

@@ -45,7 +45,7 @@ const BAPcompleted = () => {
     setEditRowId(null);
     toast.info("Edit cancelled.");
   };
-
+const API_BASE = import.meta.env.VITE_API_URL;
   const columns = [
     {
       accessorKey: "fs",

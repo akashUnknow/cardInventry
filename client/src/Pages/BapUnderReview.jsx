@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const BapUnderReview = () => {
+  const API_BASE = import.meta.env.VITE_API_URL;
   const [data, setData] = useState([]);
   const [editRowId, setEditRowId] = useState(null);
   const [editRowCopy, setEditRowCopy] = useState({});
@@ -24,7 +25,7 @@ const BapUnderReview = () => {
   const fetchUnderReviewData = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/api/idsp/type?type=In Review"
+        `${API_BASE}/api/idsp/type?type=In Review`
       );
       const json = await response.json();
 
@@ -74,7 +75,7 @@ const BapUnderReview = () => {
       };
 
       const response = await fetch(
-        "http://localhost:8080/api/idsp/update-by-fs",
+        `${API_BASE}/api/idsp/update-by-fs`,
         {
           method: "PUT",
           headers: {

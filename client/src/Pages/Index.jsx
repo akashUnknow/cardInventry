@@ -112,27 +112,19 @@ const ChartDashboard = () => {
   };
 
   return (
-    <div className="w-full min-h-screen p-4 bg-gray-100">
+    <div className="w-full min-h-screen pt-20 px-4 bg-gray-100 space-y-6">
       {/* Filters Section */}
-      <Card className="max-w-7xl mx-auto p-4 mb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <Card className="max-w-7xl mx-auto p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">From</label>
-            <Input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-            />
+            <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">To</label>
-            <Input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-            />
+            <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
           </div>
-          <div className="sm:col-span-2 lg:col-span-1 flex items-end">
+          <div className="sm:col-span-2 md:col-span-1 flex items-end">
             <Button
               onClick={handleFilter}
               className="w-full bg-blue-600 hover:bg-blue-500"
@@ -144,21 +136,21 @@ const ChartDashboard = () => {
       </Card>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-7xl mx-auto">
-        <Card className="h-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
+        <Card>
           <CardHeader>
             <CardTitle>Data Generation (DG)</CardTitle>
           </CardHeader>
-          <CardContent className="min-h-[300px] sm:h-[400px] md:h-[450px] lg:h-[500px]">
+          <CardContent className="h-[300px] sm:h-[400px] md:h-[450px] lg:h-[500px]">
             <Bar data={dgData} options={options} />
           </CardContent>
         </Card>
 
-        <Card className="h-full">
+        <Card>
           <CardHeader>
             <CardTitle>BAP Monthly Count</CardTitle>
           </CardHeader>
-          <CardContent className="min-h-[300px] sm:h-[400px] md:h-[450px] lg:h-[500px]">
+          <CardContent className="h-[300px] sm:h-[400px] md:h-[450px] lg:h-[500px]">
             <Bar data={bapData} options={options} />
           </CardContent>
         </Card>
@@ -166,7 +158,7 @@ const ChartDashboard = () => {
 
       {/* Footer */}
       <footer className="text-center text-sm text-gray-500 py-6">
-        © {new Date().getFullYear()} Your Company Name. All rights reserved.
+        © {new Date().getFullYear()} Akash MCJJ. All rights reserved.
       </footer>
     </div>
   );

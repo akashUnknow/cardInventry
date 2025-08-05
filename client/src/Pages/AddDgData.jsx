@@ -1,10 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  Card,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -40,13 +35,19 @@ const dgFormSchema = z.object({
   processor: z.string().min(1, "Processor is required"),
   validator: z.string().min(1, "Validator is required"),
   response: z.string().min(1, "Response is required"),
-  userName: z.string().min(1, "Username is required"),
+  userName: z
+    .string()
+    .min(1, "Username is required")
+    .refine((val) => !!val, {
+      message: "Username must be provided",
+    }),
   arff: z.string().min(1, "ARFF/Voucher Upload is required"),
 });
 
 const AddDgData = () => {
   const navigate = useNavigate();
-  const userName = useSelector((state) => state.auth.user); // ✅ from Redux
+  const user = useSelector((state) => state.auth.user); // from Redux
+  const userName = user.name
 
   const {
     register,
@@ -58,16 +59,17 @@ const AddDgData = () => {
     resolver: zodResolver(dgFormSchema),
   });
 
-  // set userName when available
   useEffect(() => {
     if (userName) {
       setValue("userName", userName);
+      console.log("✔️ Set username:", userName);
     }
   }, [userName, setValue]);
 
   const onFormSubmit = async (data) => {
+    console.log("Form Data:", data); // Debugging line to check form data
     try {
-      const response = await fetch(`${API_BASE}/dg/add-card`, {
+      const response = await fetch(`${API_BASE}/api/dg/add-card`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -145,35 +147,29 @@ const AddDgData = () => {
                     <option value="completed">Completed</option>
                   </select>
                 ) : (
-                  <Input
-                    type={type}
-                    {...register(name)}
-                    placeholder={label}
-                  />
+                  <Input type={type} {...register(name)} placeholder={label} />
                 )}
 
                 {errors[name] && (
-                  <p className="text-sm text-red-500">
-                    {errors[name].message}
-                  </p>
+                  <p className="text-sm text-red-500">{errors[name].message}</p>
                 )}
               </div>
             ))}
+
+            <div className="col-span-2 flex justify-center gap-4 mt-6">
+              <Button type="submit" className="bg-blue-600 hover:bg-blue-500">
+                Save
+              </Button>
+              <Link to="/">
+                <Button type="button" variant="destructive">
+                  Cancel
+                </Button>
+              </Link>
+            </div>
           </form>
         </div>
 
-        <CardFooter className="flex flex-col gap-4 mt-auto py-4">
-          <div className="flex justify-center gap-4">
-            <Button
-              onClick={handleSubmit(onFormSubmit)}
-              className="bg-blue-600 hover:bg-blue-500"
-            >
-              Save
-            </Button>
-            <Link to="/">
-              <Button variant="destructive">Cancel</Button>
-            </Link>
-          </div>
+        <CardFooter className="flex justify-center py-4">
           <p className="text-center text-sm text-gray-400">{userName}</p>
         </CardFooter>
       </Card>

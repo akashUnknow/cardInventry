@@ -41,6 +41,7 @@ const ChartDashboard = () => {
 
   // Fetch default (yearly) chart data for DG and BAP
   useEffect(() => {
+    console.log(API_BASE)
     const fetchDefaultYearData = async () => {
       try {
         // DG default data
@@ -111,7 +112,7 @@ const ChartDashboard = () => {
 
       // BAP filtered data
       const bapRes = await fetch(
-        `${API_BASE}/api/bap/bap/monthly-count?startDate=${dateFrom}&endDate=${dateTo}`
+        `${API_BASE}/api/bap/monthly-count?startDate=${dateFrom}&endDate=${dateTo}`
       );
       const bapJson = await bapRes.json();
       setBapData({

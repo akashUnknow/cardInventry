@@ -25,7 +25,7 @@ const BapHold = () => {
   const fetchHoldData = async () => {
     try {
       const response = await fetch(
-        `${API_BASE}/idsp/type?type=Hold`
+        `${API_BASE}/api/idsp/type?type=Hold`
       );
       const json = await response.json();
 
@@ -75,7 +75,7 @@ const BapHold = () => {
       };
 
       const response = await fetch(
-        `${API_BASE}/idsp/update-by-fs`,
+        `${API_BASE}/api/idsp/update-by-fs`,
         {
           method: "PUT",
           headers: {

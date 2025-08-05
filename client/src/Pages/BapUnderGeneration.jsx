@@ -25,7 +25,7 @@ const BapUnderGeneration = () => {
   const fetchPendingData = async () => {
     try {
       const response = await fetch(
-        `${API_BASE}/idsp/type?type=Pending`
+        `${API_BASE}/api/idsp/type?type=Pending`
       );
       const json = await response.json();
 

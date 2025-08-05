@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { toast } from "react-toastify";
 
 const Update = () => {
   const [formState, setFormState] = useState({
@@ -30,7 +31,10 @@ const Update = () => {
     factory: "",
     processor: "",
     validator: "",
+    arff: "", // ✅ Added
+    response: "", // ✅ Added
   });
+
   const API_BASE = import.meta.env.VITE_API_URL;
 
   const handleChange = (key, value) => {
@@ -76,34 +80,29 @@ const Update = () => {
       }
       const data = await response.json();
       console.log("Update successful:", data);
-      // Optionally show success message or redirect
     } catch (error) {
       console.error("Error updating record:", error);
-      // Optionally show error message
     }
   };
+
   const handlegdIndia = async (gdIndiaValue) => {
     console.log("Searching for GDINDIA:", gdIndiaValue);
     try {
       const response = await fetch(
         `http://localhost:8080/api/dg/search?GdIndia=${gdIndiaValue}`
       );
-
       if (!response.ok) {
         throw new Error("GDINDIA not found");
       }
-
       const data = await response.json();
       console.log("Found record:", data);
-
-      // Optionally update formState with data
       setFormState((prev) => ({
         ...prev,
-        ...data, // this assumes keys from API match your form fields
+        ...data,
       }));
     } catch (error) {
+      toast.error("GDINDIA not found: " + error.message);
       console.error("Error fetching gdIndia:", error);
-      // Optionally show toast or error message
     }
   };
 
@@ -116,7 +115,6 @@ const Update = () => {
           </CardTitle>
         </CardHeader>
 
-        {/* Scrollable area */}
         <div className="overflow-y-auto px-6">
           <form
             onSubmit={handleSubmit}
@@ -138,15 +136,14 @@ const Update = () => {
                 ) : (
                   <Input
                     type={type}
-                    value={formState[name]}
+                    value={formState[name] ?? ""} // ✅ Prevent uncontrolled warning
                     onChange={(e) => handleChange(name, e.target.value)}
                     onKeyDown={(e) => {
-                    if (name === "gdIndia" && e.key === "Enter") {
-                      handlegdIndia(formState[name]); // Call with current gdIndia value
-                    }
-                  }}
-                  placeholder={label}
-                   
+                      if (name === "gdIndia" && e.key === "Enter") {
+                        handlegdIndia(formState[name]);
+                      }
+                    }}
+                    placeholder={label}
                   />
                 )}
               </div>

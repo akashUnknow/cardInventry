@@ -154,7 +154,7 @@ const PersoCard = () => {
 
   return (
     <div className="flex justify-center mt-[20px] bg-gray-100 min-h-[calc(100vh-20vh)]">
-      <Card className="w-[600px] p-6 shadow-lg bg-white h-[calc(100vh-20vh)]">
+      <Card className="w-[600px] p-6 shadow-lg bg-white h-[calc(95vh)]">
         <CardHeader>
           <CardTitle className="text-center text-3xl font-bold">
             Perso Card Details

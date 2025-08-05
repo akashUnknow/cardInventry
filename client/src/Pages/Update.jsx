@@ -9,7 +9,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
 
 const Update = () => {
   const [formState, setFormState] = useState({
@@ -31,6 +30,8 @@ const Update = () => {
     factory: "",
     processor: "",
     validator: "",
+    arff: "",
+    response: "",
   });
 
   const API_BASE = import.meta.env.VITE_API_URL;
@@ -88,47 +89,44 @@ const Update = () => {
         `${API_BASE}/api/dg/search?GdIndia=${gdIndiaValue}`
       );
 
-      if (!response.ok) {
-        throw new Error("GDINDIA not found");
-      }
+      if (!response.ok) throw new Error("GDINDIA not found");
 
       const data = await response.json();
-      console.log("Found record:", data);
-
-      // Optionally update formState with data
-      setFormState((prev) => ({
-        ...prev,
-        ...data, // this assumes keys from API match your form fields
-      }));
+      setFormState((prev) => ({ ...prev, ...data }));
     } catch (error) {
-      toast.error("GDINDIA not found: " + error.message);
       console.error("Error fetching gdIndia:", error);
     }
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100 p-4">
-      <Card className="w-full max-w-6xl max-h-[95vh] flex flex-col shadow-xl">
-        <CardHeader className="text-center">
+    <div className="min-h-screen flex justify-center bg-gray-100 px-4 py-6 pt-20">
+      <Card className="w-full max-w-6xl h-full max-h-[95vh] flex flex-col shadow-xl rounded-lg">
+        <CardHeader className="text-center px-4 pt-6">
           <CardTitle className="text-xl sm:text-2xl font-bold">
             DG Form Update
           </CardTitle>
         </CardHeader>
 
-        {/* Scrollable area */}
-        <div className="overflow-y-auto px-6">
+        <CardContent className="overflow-y-auto px-4 pb-6">
           <form
             onSubmit={handleSubmit}
             className="grid grid-cols-1 sm:grid-cols-2 gap-4"
           >
             {fields.map(({ name, label, type = "text" }) => (
               <div key={name} className="flex flex-col">
-                <label className="font-medium text-sm mb-1">{label}:</label>
+                <label
+                  htmlFor={name}
+                  className="font-medium text-sm mb-1 text-gray-700"
+                >
+                  {label}:
+                </label>
+
                 {name === "status" ? (
                   <select
+                    id={name}
                     value={formState.status}
                     onChange={(e) => handleChange("status", e.target.value)}
-                    className="border rounded px-2 py-2 text-sm"
+                    className="border rounded-md px-2 py-2 text-sm w-full"
                   >
                     <option value="">Select status</option>
                     <option value="in-progress">In Progress</option>
@@ -136,8 +134,9 @@ const Update = () => {
                   </select>
                 ) : (
                   <Input
+                    id={name}
                     type={type}
-                    value={formState[name] ?? ""} // ✅ Prevent uncontrolled warning
+                    value={formState[name]}
                     onChange={(e) => handleChange(name, e.target.value)}
                     onKeyDown={(e) => {
                       if (name === "gdIndia" && e.key === "Enter") {
@@ -145,6 +144,7 @@ const Update = () => {
                       }
                     }}
                     placeholder={label}
+                    className="w-full"
                   />
                 )}
               </div>
@@ -152,21 +152,20 @@ const Update = () => {
           </form>
         </CardContent>
 
-        <CardFooter className="flex flex-col sm:flex-row justify-center items-center gap-4 py-4 border-t">
+        <CardFooter className="flex flex-col sm:flex-row justify-center items-center gap-4 py-4 border-t px-4">
           <Button
             onClick={handleSubmit}
             className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500"
           >
             Update
           </Button>
+
           <Link to="/" className="w-full sm:w-auto">
             <Button variant="destructive" className="w-full sm:w-auto">
               Cancel
             </Button>
           </Link>
-          <p className="text-xs text-gray-400 text-center mt-2 sm:mt-0 w-full">
-            Akash
-          </p>
+
         </CardFooter>
       </Card>
     </div>

@@ -91,75 +91,82 @@ const Login = () => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(handleForm)}
-      className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-10"
-    >
-      <Card className="w-full max-w-md p-6 shadow-xl rounded-2xl">
-        <CardHeader className="text-center mb-4">
-          <CardTitle className="text-2xl sm:text-3xl font-bold">
-            Login to your account
-          </CardTitle>
-        </CardHeader>
+<form
+  onSubmit={handleSubmit(handleForm)}
+  className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-10"
+>
+  <Card className="w-full max-w-md p-6 sm:p-8 shadow-xl rounded-2xl bg-white">
+    {/* Header */}
+    <CardHeader className="text-center mb-4">
+      <CardTitle className="text-2xl sm:text-3xl font-bold text-gray-800">
+        Login to your account
+      </CardTitle>
+    </CardHeader>
 
-        <CardContent className="space-y-5">
-          {/* Username */}
-          <div className="space-y-2">
-            <Label htmlFor="userName">Username</Label>
-            <Input
-              id="userName"
-              type="text"
-              placeholder="Enter your username"
-              {...register("userName")}
-            />
-            {errors.userName && (
-              <p className="text-sm text-red-600">{errors.userName.message}</p>
-            )}
-          </div>
+    {/* Form Fields */}
+    <CardContent className="space-y-5">
+      {/* Username */}
+      <div className="space-y-2">
+        <Label htmlFor="userName">Username</Label>
+        <Input
+          id="userName"
+          type="text"
+          placeholder="Enter your username"
+          {...register("userName")}
+        />
+        {errors.userName && (
+          <p className="text-sm text-red-600">{errors.userName.message}</p>
+        )}
+      </div>
 
-          {/* Password */}
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                {...register("password")}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-800"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-            {errors.password && (
-              <p className="text-sm text-red-600">{errors.password.message}</p>
-            )}
-          </div>
+      {/* Password */}
+      <div className="space-y-2">
+        <Label htmlFor="password">Password</Label>
+        <div className="relative">
+          <Input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            placeholder="••••••••"
+            {...register("password")}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-800"
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
+        {errors.password && (
+          <p className="text-sm text-red-600">{errors.password.message}</p>
+        )}
+      </div>
 
-          {/* Remember Me */}
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="remember"
-              checked={rememberMe}
-              onCheckedChange={(checked) => setRememberMe(!!checked)}
-            />
-            <label htmlFor="remember" className="text-sm">
-              Remember me
-            </label>
-          </div>
-        </CardContent>
+      {/* Remember Me */}
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="remember"
+          checked={rememberMe}
+          onCheckedChange={(checked) => setRememberMe(!!checked)}
+        />
+        <label htmlFor="remember" className="text-sm">
+          Remember me
+        </label>
+      </div>
+    </CardContent>
 
-        <CardFooter className="flex flex-col gap-4 pt-6">
-          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-500">
-            Sign In
-          </Button>
-        </CardFooter>
-      </Card>
-    </form>
+    {/* Submit Button */}
+    <CardFooter className="flex flex-col gap-4 pt-6">
+      <Button
+        type="submit"
+        className="w-full bg-blue-600 hover:bg-blue-500 text-white"
+      >
+        Sign In
+      </Button>
+    </CardFooter>
+  </Card>
+</form>
+
   );
 };
 

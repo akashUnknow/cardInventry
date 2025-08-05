@@ -1,6 +1,7 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import {
   Card,
+  CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -10,54 +11,48 @@ import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-// const API_BASE = "http://localhost:8080/api/bap";\
-const API_BASE = import.meta.env.VITE_API_URL + "/api/bap"; // Adjust this to your actual API base URL
+const API_BASE = import.meta.env.VITE_API_URL + "/api/bap";
 
 const Bap = () => {
   const navigate = useNavigate();
+
+  const defaultFormState = {
+    orderNo: "",
+    sapNo: "",
+    cpssNo: "",
+    dgCateg: "",
+    priority: "",
+    profile: "",
+    requestType: "",
+    developer: "",
+    validator: "",
+    validationStatus: "",
+    orderReceive: "",
+    slascheduledFinishDate: "",
+    startDate: "",
+    finishDate: "",
+    status: "",
+    remarks: "",
+  };
+
+  const [formState, setFormState] = useState(defaultFormState);
   const [isExisting, setIsExisting] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-    reset,
-  } = useForm({
-    resolver: zodResolver(bapSchema),
-    defaultValues: {
-      orderNo: "",
-      sapNo: "",
-      cpssNo: "",
-      dgCateg: "",
-      priority: "",
-      profile: "",
-      requestType: "",
-      developer: "",
-      validator: "",
-      validationStatus: "",
-      orderReceive: "",
-      slascheduledFinishDate: "",
-      startDate: "",
-      finishDate: "",
-      status: "",
-      remarks: "",
-    },
-  });
+  const handleChange = (key, value) => {
+    setFormState((prev) => ({ ...prev, [key]: value }));
+  };
 
   const handleOrderNoEnter = async (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
       try {
-        const res = await fetch(`${API_BASE}/search?orderNo=${e.target.value}`);
+        const res = await fetch(`${API_BASE}/search?orderNo=${formState.orderNo}`);
         if (!res.ok) throw new Error("Not Found");
         const data = await res.json();
 
         if (data?.orderNo) {
           toast.success("Order found. Form pre-filled.");
-          Object.keys(data).forEach((key) => {
-            setValue(key, data[key]);
-          });
+          setFormState(data);
           setIsExisting(true);
         } else {
           toast.info("No existing order found.");
@@ -72,6 +67,7 @@ const Bap = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const endpoint = isExisting
       ? `${API_BASE}/update-by-orderNo`
       : `${API_BASE}/add-profile`;
@@ -81,7 +77,7 @@ const Bap = () => {
       const response = await fetch(endpoint, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formState),
       });
 
       const data = await response.json();
@@ -92,7 +88,7 @@ const Bap = () => {
       }
 
       toast.success(isExisting ? "Profile updated successfully" : "Profile added successfully");
-      reset();
+      setFormState(defaultFormState);
       setIsExisting(false);
       navigate("/");
     } catch (error) {
@@ -129,24 +125,25 @@ const Bap = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center bg-gray-100 p-4">
-      <Card className="w-full max-w-6xl flex flex-col">
+    <div className="min-h-screen flex justify-center bg-gray-100 px-4 py-6 mt-20">
+      <Card className="w-full max-w-6xl">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-bold">BAP Form</CardTitle>
         </CardHeader>
 
         <CardContent className="overflow-y-auto px-4">
           <form
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit}
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
           >
             {fields.map(({ name, label, type = "text" }) => (
               <div key={name} className="flex flex-col gap-1">
-                <label className="font-medium">{label}:</label>
+                <label className="font-medium text-sm">{label}:</label>
 
                 {dropdownOptions[name] ? (
                   <select
-                    {...register(name)}
+                    value={formState[name]}
+                    onChange={(e) => handleChange(name, e.target.value)}
                     className={`border rounded px-2 py-1 text-sm ${
                       isExisting ? "bg-green-100" : ""
                     }`}
@@ -159,26 +156,23 @@ const Bap = () => {
                 ) : (
                   <Input
                     type={type}
-                    {...register(name)}
+                    value={formState[name]}
+                    onChange={(e) => handleChange(name, e.target.value)}
                     onKeyDown={name === "orderNo" ? handleOrderNoEnter : undefined}
                     placeholder={label}
                     className={isExisting ? "bg-green-100" : ""}
                   />
-                )}
-
-                {errors[name] && (
-                  <p className="text-sm text-red-500">{errors[name]?.message}</p>
                 )}
               </div>
             ))}
           </form>
         </CardContent>
 
-        <CardFooter className="flex flex-col gap-4 mt-auto py-4">
-          <div className="flex justify-center gap-4">
+        <CardFooter className="flex flex-col gap-4 py-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 w-full">
             <Button
-              onClick={handleSubmit(onSubmit)}
-              className={`${
+              onClick={handleSubmit}
+              className={`w-full sm:w-auto ${
                 isExisting
                   ? "bg-yellow-500 hover:bg-yellow-400"
                   : "bg-blue-600 hover:bg-blue-500"
@@ -186,8 +180,10 @@ const Bap = () => {
             >
               {isExisting ? "Update" : "Save"}
             </Button>
-            <Link to="/">
-              <Button variant="destructive">Cancel</Button>
+            <Link to="/" className="w-full sm:w-auto">
+              <Button variant="destructive" className="w-full sm:w-auto">
+                Cancel
+              </Button>
             </Link>
           </div>
           <p className="text-center text-sm text-gray-400">akash</p>

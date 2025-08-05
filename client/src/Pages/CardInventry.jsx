@@ -107,8 +107,8 @@ const CardInventry = () => {
   };
 
   return (
-    <div className="flex justify-center mt-[20px] bg-gray-100 min-h-[calc(100vh-20vh)] ">
-      <Card className="w-[900px] shadow-lg hover:shadow-xl h-[calc(100vh-65vh)] transition-shadow duration-300 ">
+    <div className="flex justify-center bg-gray-100 min-h-[calc(100vh-60vh)] pt-20">
+      <Card className="w-full max-w-4xl shadow-lg hover:shadow-xl transition-shadow duration-300 my-6">
         <CardHeader>
           <CardTitle className="text-center text-2xl sm:text-3xl font-bold">
             Card Inventory

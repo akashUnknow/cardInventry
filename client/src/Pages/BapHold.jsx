@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+
 import {
   useReactTable,
   getCoreRowModel,
@@ -24,9 +25,7 @@ const BapHold = () => {
 
   const fetchHoldData = async () => {
     try {
-      const response = await fetch(
-        `${API_BASE}/idsp/type?type=Hold`
-      );
+      const response = await fetch(`${API_BASE}/api/idsp/type?type=Hold`);
       const json = await response.json();
 
       if (!response.ok) {
@@ -74,16 +73,11 @@ const BapHold = () => {
         type: editRowCopy.type,
       };
 
-      const response = await fetch(
-        `${API_BASE}/idsp/update-by-fs`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const response = await fetch(`${API_BASE}/api/idsp/update-by-fs`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
       const json = await response.json();
 
@@ -121,19 +115,42 @@ const BapHold = () => {
     setEditRowCopy({});
     toast.info("Edit cancelled.");
   };
+  const EditableCell = ({ value, onChange, type = "text" }) => {
+  const [inputValue, setInputValue] = useState(value || "");
 
-  const columns = [
+  useEffect(() => {
+    setInputValue(value || "");
+  }, [value]);
+
+  const handleChange = (e) => {
+    setInputValue(e.target.value);
+    onChange(e.target.value);
+  };
+
+  return (
+    <Input
+      type={type}
+      value={inputValue}
+      onChange={handleChange}
+      className="w-full"
+    />
+  );
+};
+
+
+const columns = useMemo(
+  () => [
     {
       accessorKey: "id",
       header: "FS No",
       cell: ({ row }) =>
         row.original.id === editRowId ? (
-          <Input
+          <EditableCell
             value={editRowCopy.id}
             onChange={(e) => handleInputChange("id", e.target.value)}
           />
         ) : (
-          row.original.id
+          row.getValue("id")
         ),
     },
     {
@@ -141,12 +158,12 @@ const BapHold = () => {
       header: "Project Name",
       cell: ({ row }) =>
         row.original.id === editRowId ? (
-          <Input
+          <EditableCell
             value={editRowCopy.profile}
             onChange={(e) => handleInputChange("profile", e.target.value)}
           />
         ) : (
-          row.original.profile
+          row.getValue("profile")
         ),
     },
     {
@@ -154,12 +171,12 @@ const BapHold = () => {
       header: "Assigned To",
       cell: ({ row }) =>
         row.original.id === editRowId ? (
-          <Input
+          <EditableCell
             value={editRowCopy.configurator}
             onChange={(e) => handleInputChange("configurator", e.target.value)}
           />
         ) : (
-          row.original.configurator
+          row.getValue("configurator")
         ),
     },
     {
@@ -178,7 +195,7 @@ const BapHold = () => {
             <option value="Hold">Hold</option>
           </select>
         ) : (
-          row.original.type
+          row.getValue("type")
         ),
     },
     {
@@ -186,13 +203,13 @@ const BapHold = () => {
       header: "EDD",
       cell: ({ row }) =>
         row.original.id === editRowId ? (
-          <Input
+          <EditableCell
             type="date"
             value={editRowCopy.edd}
             onChange={(e) => handleInputChange("edd", e.target.value)}
           />
         ) : (
-          row.original.edd
+          row.getValue("edd")
         ),
     },
     {
@@ -200,12 +217,12 @@ const BapHold = () => {
       header: "Comment",
       cell: ({ row }) =>
         row.original.id === editRowId ? (
-          <Input
+          <EditableCell
             value={editRowCopy.comment}
             onChange={(e) => handleInputChange("comment", e.target.value)}
           />
         ) : (
-          row.original.comment
+          row.getValue("comment")
         ),
     },
     {
@@ -213,14 +230,12 @@ const BapHold = () => {
       header: "Partner Code",
       cell: ({ row }) =>
         row.original.id === editRowId ? (
-          <Input
+          <EditableCell
             value={editRowCopy.partnerCode}
-            onChange={(e) =>
-              handleInputChange("partnerCode", e.target.value)
-            }
+            onChange={(e) => handleInputChange("partnerCode", e.target.value)}
           />
         ) : (
-          row.original.partnerCode
+          row.getValue("partnerCode")
         ),
     },
     {
@@ -228,12 +243,12 @@ const BapHold = () => {
       header: "Version",
       cell: ({ row }) =>
         row.original.id === editRowId ? (
-          <Input
+          <EditableCell
             value={editRowCopy.version}
             onChange={(e) => handleInputChange("version", e.target.value)}
           />
         ) : (
-          row.original.version
+          row.getValue("version")
         ),
     },
     {
@@ -272,7 +287,11 @@ const BapHold = () => {
         );
       },
     },
-  ];
+  ],
+  [editRowId, editRowCopy]
+);
+
+
 
   const table = useReactTable({
     data,
@@ -281,7 +300,7 @@ const BapHold = () => {
   });
 
   return (
-    <Card className="p-4 w-full overflow-x-auto">
+    <Card className="p-4 w-full mt-20">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
         <h2 className="text-xl font-bold">BAP - Hold</h2>
         <Button onClick={fetchHoldData} variant="outline" size="sm">
@@ -290,7 +309,7 @@ const BapHold = () => {
       </div>
 
       <ScrollArea className="w-full overflow-x-auto">
-        <div className="min-w-[1000px]">
+        <div className="min-w-[900px]">
           <table className="w-full text-sm border-collapse">
             <thead className="bg-gray-100">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -298,7 +317,7 @@ const BapHold = () => {
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
-                      className="border px-4 py-2 text-left font-medium whitespace-nowrap"
+                      className="border px-3 py-2 text-left font-medium whitespace-nowrap"
                     >
                       {flexRender(
                         header.column.columnDef.header,
@@ -311,11 +330,11 @@ const BapHold = () => {
             </thead>
             <tbody>
               {table.getRowModel().rows.map((row) => (
-                <tr key={row.id}>
+                <tr key={row.id} className="hover:bg-gray-50">
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className="border px-4 py-2 whitespace-nowrap"
+                      className="border px-3 py-2 whitespace-nowrap align-top"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

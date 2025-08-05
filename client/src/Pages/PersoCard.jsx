@@ -97,16 +97,25 @@ const PersoCard = () => {
       shredCard,
     } = formData;
 
-    if (!cardDescription || !formFactor || !usedQuantity || isNaN(usedQuantity)) {
+    if (
+      !cardDescription ||
+      !formFactor ||
+      !usedQuantity ||
+      isNaN(usedQuantity)
+    ) {
       toast.warn("Please enter all required fields correctly.");
       return;
     }
 
     if (
-      parseInt(rst || 0) + parseInt(telcaPersoTest || 0) + parseInt(shredCard || 0) !==
+      parseInt(rst || 0) +
+        parseInt(telcaPersoTest || 0) +
+        parseInt(shredCard || 0) !==
       parseInt(usedQuantity)
     ) {
-      toast.warn("RST + TelcaPerso Test + Shred Card must equal Used Quantity.");
+      toast.warn(
+        "RST + TelcaPerso Test + Shred Card must equal Used Quantity."
+      );
       return;
     }
 
@@ -143,24 +152,26 @@ const PersoCard = () => {
   };
 
   return (
-    <div className="flex justify-center mt-[20px] bg-gray-100 min-h-[calc(100vh-20vh)]">
-      <Card className="w-[600px] p-6 shadow-lg bg-white h-[calc(100vh-20vh)]">
+    <div className="min-h-screen flex justify-center items-center bg-gray-100 px-4 py-10 pt-20">
+      <Card className="w-full max-w-3xl p-4 sm:p-6 shadow-lg rounded-2xl bg-white">
         <CardHeader>
-          <CardTitle className="text-center text-2xl sm:text-3xl font-bold">
+          <CardTitle className="text-center text-xl sm:text-2xl font-bold">
             Perso Card Details
           </CardTitle>
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Card Description */}
-            <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
-              <label className="sm:w-48 font-medium">Card Description:</label>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
+              <label className="sm:w-40 font-medium text-sm sm:text-base">
+                Card Description:
+              </label>
               <select
                 name="cardDescription"
                 value={formData.cardDescription}
                 onChange={handleChange}
-                className="w-full flex-1 p-2 border border-gray-300 rounded-md"
+                className="w-full flex-1 p-2 border border-gray-300 rounded-md text-sm"
                 required
               >
                 <option value="">-- Select --</option>
@@ -173,13 +184,15 @@ const PersoCard = () => {
             </div>
 
             {/* Form Factor */}
-            <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
-              <label className="sm:w-48 font-medium">Form Factor:</label>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
+              <label className="sm:w-40 font-medium text-sm sm:text-base">
+                Form Factor:
+              </label>
               <select
                 name="formFactor"
                 value={formData.formFactor}
                 onChange={handleChange}
-                className="w-full flex-1 p-2 border border-gray-300 rounded-md"
+                className="w-full flex-1 p-2 border border-gray-300 rounded-md text-sm"
                 required
               >
                 <option value="">-- Select --</option>
@@ -192,8 +205,10 @@ const PersoCard = () => {
             </div>
 
             {/* Used Quantity */}
-            <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
-              <label className="sm:w-48 font-medium">Used Quantity:</label>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
+              <label className="sm:w-40 font-medium text-sm sm:text-base">
+                Used Quantity:
+              </label>
               <Input
                 type="number"
                 name="usedQuantity"
@@ -205,7 +220,7 @@ const PersoCard = () => {
               />
             </div>
 
-            {/* Other Fields */}
+            {/* Dynamic Input Fields */}
             {[
               ["profile", "Profile"],
               ["configurator", "Configurator"],
@@ -217,9 +232,11 @@ const PersoCard = () => {
             ].map(([name, label]) => (
               <div
                 key={name}
-                className="flex flex-col sm:flex-row gap-2 items-start sm:items-center"
+                className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center"
               >
-                <label className="sm:w-48 font-medium">{label}:</label>
+                <label className="sm:w-40 font-medium text-sm sm:text-base">
+                  {label}:
+                </label>
                 <Input
                   name={name}
                   value={formData[name]}
@@ -232,7 +249,10 @@ const PersoCard = () => {
 
             {/* Actions */}
             <CardFooter className="flex flex-col sm:flex-row justify-center gap-4 pt-6">
-              <Button type="submit" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500">
+              <Button
+                type="submit"
+                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500"
+              >
                 Save & Use
               </Button>
               <Link to={Routecardinventry} className="w-full sm:w-auto">

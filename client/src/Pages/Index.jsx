@@ -31,7 +31,6 @@ const ChartDashboard = () => {
   };
 
   useEffect(() => {
-    console.log(API_BASE)
     const fetchDefaultYearData = async () => {
       try {
         const dgRes = await fetch(`${API_BASE}/api/dg/dg-inventory/monthly-count/2024`);
@@ -93,7 +92,7 @@ const ChartDashboard = () => {
       });
 
       const bapRes = await fetch(
-        `${API_BASE}/api/bap/monthly-count?startDate=${dateFrom}&endDate=${dateTo}`
+        `${API_BASE}/api/bap/bap/monthly-count?startDate=${dateFrom}&endDate=${dateTo}`
       );
       const bapJson = await bapRes.json();
       setBapData({
@@ -112,57 +111,72 @@ const ChartDashboard = () => {
     }
   };
 
-  return (
-    <div className="w-full min-h-screen pt-20 px-4 bg-gray-100 space-y-6">
-      {/* Filters Section */}
-      <Card className="max-w-7xl mx-auto p-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">From</label>
-            <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">To</label>
-            <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
-          </div>
-          <div className="sm:col-span-2 md:col-span-1 flex items-end">
-            <Button
-              onClick={handleFilter}
-              className="w-full bg-blue-600 hover:bg-blue-500"
-            >
-              Apply Filter
-            </Button>
-          </div>
+return (
+  <div className="w-full min-h-screen pt-20 px-4 bg-gray-100 space-y-6">
+    {/* Filters Section */}
+    <Card className="max-w-7xl mx-auto p-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">From</label>
+          <Input
+            type="date"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+          />
         </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">To</label>
+          <Input
+            type="date"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+          />
+        </div>
+        <div className="sm:col-span-2 md:col-span-1 flex items-end">
+          <Button
+            onClick={handleFilter}
+            className="w-full bg-blue-600 hover:bg-blue-500"
+          >
+            Apply Filter
+          </Button>
+        </div>
+      </div>
+    </Card>
+
+    {/* Charts Section */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
+      {/* DG Chart */}
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle className="text-base sm:text-lg font-semibold">
+            Data Generation (DG)
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="h-[300px] sm:h-[400px] md:h-[450px] lg:h-[500px]">
+          <Bar data={dgData} options={options} />
+        </CardContent>
       </Card>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
-        <Card>
-          <CardHeader>
-            <CardTitle>Data Generation (DG)</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[300px] sm:h-[400px] md:h-[450px] lg:h-[500px]">
-            <Bar data={dgData} options={options} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>BAP Monthly Count</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[300px] sm:h-[400px] md:h-[450px] lg:h-[500px]">
-            <Bar data={bapData} options={options} />
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Footer */}
-      <footer className="text-center text-sm text-gray-500 py-6">
-        © {new Date().getFullYear()} Akash MCJJ. All rights reserved.
-      </footer>
+      {/* BAP Chart */}
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle className="text-base sm:text-lg font-semibold">
+            BAP Monthly Count
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="h-[300px] sm:h-[400px] md:h-[450px] lg:h-[500px]">
+          <Bar data={bapData} options={options} />
+        </CardContent>
+      </Card>
     </div>
-  );
+
+    {/* Footer */}
+    <footer className="text-center text-sm text-gray-500 py-6">
+      © {new Date().getFullYear()} Akash MCJJ. All rights reserved.
+    </footer>
+  </div>
+);
+
 };
 
 export default ChartDashboard;

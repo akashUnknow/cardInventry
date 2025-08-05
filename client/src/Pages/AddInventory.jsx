@@ -49,7 +49,7 @@ const AddInventory = () => {
     }
 
     const data = {
-      cardDescription: cardDescription,
+      cardDescription,
       [mappedKey]: parseInt(quantity),
     };
 
@@ -73,7 +73,7 @@ const AddInventory = () => {
   };
 
   return (
-    <div className="flex justify-center py-8 px-4 bg-gray-100 min-h-[calc(100vh-60vh)]">
+    <div className="flex justify-center w-full pt-20 px-4 bg-gray-100 min-h-[calc(100vh-60vh)]">
       <Card className="w-full max-w-3xl shadow-md bg-white">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-bold">Add Inventory</CardTitle>
@@ -82,7 +82,7 @@ const AddInventory = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Card Description */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-3">
               <label className="font-medium sm:text-right">Card Description:</label>
               <select
                 className="col-span-2 p-2 border border-gray-300 rounded-md"
@@ -91,14 +91,14 @@ const AddInventory = () => {
                 required
               >
                 <option value="">-- Select --</option>
-                {cardDescriptions.map((description, index) => (
-                  <option key={index} value={description}>{description}</option>
+                {cardDescriptions.map((desc, i) => (
+                  <option key={i} value={desc}>{desc}</option>
                 ))}
               </select>
             </div>
 
             {/* Form Factor */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-3">
               <label className="font-medium sm:text-right">Form Factor:</label>
               <select
                 className="col-span-2 p-2 border border-gray-300 rounded-md"
@@ -107,14 +107,14 @@ const AddInventory = () => {
                 required
               >
                 <option value="">-- Select --</option>
-                {formFactors.map((factor, index) => (
-                  <option key={index} value={factor}>{factor}</option>
+                {formFactors.map((factor, i) => (
+                  <option key={i} value={factor}>{factor}</option>
                 ))}
               </select>
             </div>
 
             {/* Quantity */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-3">
               <label className="font-medium sm:text-right">Quantity:</label>
               <Input
                 type="number"
@@ -128,7 +128,7 @@ const AddInventory = () => {
             </div>
 
             {/* Buttons */}
-            <CardFooter className="flex flex-col sm:flex-row justify-center gap-4 pt-6">
+            <CardFooter className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
               <Button type="submit" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500">
                 Save
               </Button>

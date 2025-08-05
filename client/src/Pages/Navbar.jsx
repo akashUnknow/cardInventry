@@ -20,7 +20,6 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/slices/authSlice.jsx";
 
-// Routes
 import {
   RouteIndex,
   Routecardinventry,
@@ -53,6 +52,7 @@ const Navbar = () => {
 
   return (
     <>
+      {/* Top Navbar */}
       <nav className="w-full bg-white shadow border-b px-4 py-3 fixed top-0 left-0 z-40">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -60,44 +60,33 @@ const Navbar = () => {
             <Link to={RouteIndex}>Simphony</Link>
           </div>
 
-          {/* Desktop Menu */}
-          <div className="hidden sm:flex gap-6 items-center">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex gap-6 items-center">
             <NavigationMenu>
               <NavigationMenuList className="flex gap-4">
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link to={Routecardinventry} className="text-sm font-semibold hover:text-blue-600">Inventory</Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
+                {[
+                  { label: "Inventory", route: Routecardinventry },
+                  { label: "Add DG Data", route: RouteAdddgdata },
+                  { label: "Update", route: RouteUpdate },
+                  { label: "IDSP", route: RouteIdsp },
+                  { label: "BAP", route: RouteBap },
+                ].map((item) => (
+                  <NavigationMenuItem key={item.route}>
+                    <NavigationMenuLink asChild>
+                      <Link to={item.route} className="text-sm font-semibold hover:text-blue-600">
+                        {item.label}
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                ))}
 
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link to={RouteAdddgdata} className="text-sm font-semibold hover:text-blue-600">Add DG Data</Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link to={RouteUpdate} className="text-sm font-semibold hover:text-blue-600">Update</Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link to={RouteIdsp} className="text-sm font-semibold hover:text-blue-600">IDSP</Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link to={RouteBap} className="text-sm font-semibold hover:text-blue-600">BAP</Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-
+                {/* Dropdown under More */}
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
                     <DropdownMenu>
-                      <DropdownMenuTrigger className="text-sm font-semibold hover:text-blue-600">More</DropdownMenuTrigger>
+                      <DropdownMenuTrigger className="text-sm font-semibold hover:text-blue-600">
+                        More
+                      </DropdownMenuTrigger>
                       <DropdownMenuContent>
                         <Link to={RouteBapGeneration}><DropdownMenuItem>Under Generation</DropdownMenuItem></Link>
                         <Link to={RouteBapReview}><DropdownMenuItem>Under Review</DropdownMenuItem></Link>
@@ -110,8 +99,8 @@ const Navbar = () => {
             </NavigationMenu>
           </div>
 
-          {/* User Info (Desktop) */}
-          <div className="hidden sm:flex items-center gap-4">
+          {/* Desktop User Info */}
+          <div className="hidden md:flex items-center gap-4">
             <Link
               to={RouteLogin}
               className="text-sm font-semibold hover:text-blue-600"
@@ -124,7 +113,7 @@ const Navbar = () => {
               <HoverCardTrigger className="cursor-pointer font-semibold text-sm">
                 {user?.name || user?.username || "Guest"}
               </HoverCardTrigger>
-              <HoverCardContent>
+              <HoverCardContent className="text-sm">
                 {user?.email
                   ? `Logged in as ${user.email}`
                   : "Welcome to the platform"}
@@ -133,10 +122,11 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="sm:hidden">
+          <div className="md:hidden">
             <button
+              aria-label="Toggle menu"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="text-gray-700 text-xl"
+              className="text-gray-700 text-2xl focus:outline-none"
             >
               ☰
             </button>
@@ -155,14 +145,26 @@ const Navbar = () => {
           Simphony
         </div>
         <div className="flex flex-col gap-4 p-4">
-          <Link to={Routecardinventry} className="text-sm font-semibold hover:text-blue-600" onClick={() => setMenuOpen(false)}>Inventory</Link>
-          <Link to={RouteAdddgdata} className="text-sm font-semibold hover:text-blue-600" onClick={() => setMenuOpen(false)}>Add DG Data</Link>
-          <Link to={RouteUpdate} className="text-sm font-semibold hover:text-blue-600" onClick={() => setMenuOpen(false)}>Update</Link>
-          <Link to={RouteIdsp} className="text-sm font-semibold hover:text-blue-600" onClick={() => setMenuOpen(false)}>IDSP</Link>
-          <Link to={RouteBap} className="text-sm font-semibold hover:text-blue-600" onClick={() => setMenuOpen(false)}>BAP</Link>
-          <Link to={RouteBapGeneration} className="text-sm font-semibold hover:text-blue-600" onClick={() => setMenuOpen(false)}>Under Generation</Link>
-          <Link to={RouteBapReview} className="text-sm font-semibold hover:text-blue-600" onClick={() => setMenuOpen(false)}>Under Review</Link>
-          <Link to={RouteBapHold} className="text-sm font-semibold hover:text-blue-600" onClick={() => setMenuOpen(false)}>Hold</Link>
+          {[ 
+            { label: "Inventory", route: Routecardinventry },
+            { label: "Add DG Data", route: RouteAdddgdata },
+            { label: "Update", route: RouteUpdate },
+            { label: "IDSP", route: RouteIdsp },
+            { label: "BAP", route: RouteBap },
+            { label: "Under Generation", route: RouteBapGeneration },
+            { label: "Under Review", route: RouteBapReview },
+            { label: "Hold", route: RouteBapHold },
+          ].map((item) => (
+            <Link
+              key={item.route}
+              to={item.route}
+              className="text-sm font-semibold hover:text-blue-600"
+              onClick={() => setMenuOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
+
           <Link
             to={RouteLogin}
             className="text-sm font-semibold hover:text-blue-600"
@@ -179,7 +181,7 @@ const Navbar = () => {
       {/* Overlay when sidebar is open */}
       {menuOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-40 z-40 sm:hidden"
+          className="fixed inset-0 bg-black bg-opacity-40 z-40 md:hidden"
           onClick={() => setMenuOpen(false)}
         />
       )}

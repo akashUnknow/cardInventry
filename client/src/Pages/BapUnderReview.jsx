@@ -247,51 +247,58 @@ const BapUnderReview = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  return (
-    <Card className="p-4 w-full overflow-x-auto">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
-        <h2 className="text-xl font-bold">BAP - Under Review</h2>
-        <Button onClick={fetchUnderReviewData} variant="outline" size="sm">
-          Refresh
-        </Button>
-      </div>
+return (
+  <Card className="p-4 w-full mt-20">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
+      <h2 className="text-xl font-bold">BAP - Under Review</h2>
+      <Button onClick={fetchUnderReviewData} variant="outline" size="sm">
+        Refresh
+      </Button>
+    </div>
 
-      <ScrollArea className="w-full overflow-x-auto">
-        <div className="min-w-[1000px]">
-          <table className="w-full text-sm border-collapse">
-            <thead className="bg-gray-100">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className="border px-4 py-2 text-left font-medium whitespace-nowrap"
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      className="border px-4 py-2 whitespace-nowrap"
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </ScrollArea>
-    </Card>
-  );
+    <ScrollArea className="w-full overflow-x-auto">
+      <div className="min-w-[1000px]">
+        <table className="w-full text-sm border-collapse">
+          <thead className="bg-gray-100">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    className="border px-3 py-2 text-left font-medium whitespace-nowrap"
+                  >
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id} className="hover:bg-gray-50">
+                {row.getVisibleCells().map((cell) => (
+                  <td
+                    key={cell.id}
+                    className="border px-3 py-2 whitespace-nowrap align-top"
+                  >
+                    {flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext()
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </ScrollArea>
+  </Card>
+);
+
 };
 
 export default BapUnderReview;

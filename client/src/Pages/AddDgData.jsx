@@ -10,8 +10,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-const API_BASE = import.meta.env.VITE_API_URL;
-
 // ✅ Zod schema
 const dgFormSchema = z.object({
   month: z.string().min(1, "Month is required"),
@@ -45,8 +43,10 @@ const dgFormSchema = z.object({
 });
 
 const AddDgData = () => {
+  const API_BASE = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
-  const userName = useSelector((state) => state.auth.user); // ✅ from Redux
+  const user = useSelector((state) => state.auth.user);
+  const userName = user?.name || "";
 
   const {
     register,
@@ -61,12 +61,10 @@ const AddDgData = () => {
   useEffect(() => {
     if (userName) {
       setValue("userName", userName);
-      console.log("✔️ Set username:", userName);
     }
   }, [userName, setValue]);
 
   const onFormSubmit = async (data) => {
-    console.log("Form Data:", data); // Debugging line to check form data
     try {
       const response = await fetch(`${API_BASE}/api/dg/add-card`, {
         method: "POST",
@@ -88,6 +86,10 @@ const AddDgData = () => {
       console.error("Submit Error:", error);
       toast.error("Something went wrong!");
     }
+  };
+
+  const onError = (errors) => {
+    console.log("Validation Errors:", errors);
   };
 
   const fields = [
@@ -114,70 +116,74 @@ const AddDgData = () => {
   ];
 
   return (
-    <div className="min-h-screen flex justify-center bg-gray-100 px-4 py-6">
+    <div className="min-h-screen bg-gray-100 pt-24 px-4 pb-10 flex justify-center">
       <Card className="w-full max-w-6xl flex flex-col">
         <CardHeader>
-          <CardTitle className="text-center text-2xl font-bold">DG Form</CardTitle>
+          <CardTitle className="text-center text-2xl font-bold">
+            DG Form
+          </CardTitle>
         </CardHeader>
 
-        {/* Scrollable Form */}
-        <div className="overflow-y-auto px-6 py-2 max-h-[70vh]">
+        <div className="px-4 sm:px-6 py-4 overflow-y-auto max-h-[70vh]">
           <form
-            onSubmit={handleSubmit(onFormSubmit)}
-            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            onSubmit={handleSubmit(onFormSubmit, onError)}
+            className="flex flex-col justify-between"
           >
-            <Input type="hidden" {...register("userName")} />
+            {/* Responsive Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Input type="hidden" {...register("userName")} />
 
-            {fields.map(({ name, label, type = "text" }) => (
-              <div key={name} className="flex flex-col gap-1">
-                <label className="font-medium text-sm">{label}:</label>
+              {fields.map(({ name, label, type = "text" }) => (
+                <div key={name} className="flex flex-col gap-1">
+                  <label className="font-medium text-sm">{label}:</label>
 
-                {name === "status" ? (
-                  <select
-                    {...register(name)}
-                    className="border rounded px-2 py-1 text-sm"
-                  >
-                    <option value="">Select status</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                  </select>
-                ) : (
-                  <Input type={type} {...register(name)} placeholder={label} />
-                )}
+                  {name === "status" ? (
+                    <select
+                      {...register(name)}
+                      className="border rounded px-2 py-1 text-sm"
+                    >
+                      <option value="">Select status</option>
+                      <option value="in-progress">In Progress</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                  ) : (
+                    <Input
+                      type={type}
+                      {...register(name)}
+                      placeholder={label}
+                    />
+                  )}
 
-                {errors[name] && (
-                  <p className="text-sm text-red-500">{errors[name].message}</p>
-                )}
-              </div>
-            ))}
-
-            <div className="col-span-2 flex justify-center gap-4 mt-6">
-              <Button type="submit" className="bg-blue-600 hover:bg-blue-500">
-                Save
-              </Button>
-              <Link to="/">
-                <Button type="button" variant="destructive">
-                  Cancel
-                </Button>
-              </Link>
+                  {errors[name] && (
+                    <p className="text-sm text-red-500">
+                      {errors[name].message}
+                    </p>
+                  )}
+                </div>
+              ))}
             </div>
+
+            {/* Submit Footer */}
+            <CardFooter className="flex flex-col gap-4 pt-6">
+              <div className="flex flex-col sm:flex-row justify-center gap-4 w-full">
+                <Button
+                  type="submit"
+                  className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500"
+                >
+                  Save
+                </Button>
+                <Link to="/" className="w-full sm:w-auto">
+                  <Button variant="destructive" className="w-full sm:w-auto">
+                    Cancel
+                  </Button>
+                </Link>
+              </div>
+              <p className="text-center text-sm text-gray-400">
+                {user?.username}
+              </p>
+            </CardFooter>
           </form>
         </div>
-
-        <CardFooter className="flex flex-col gap-4 mt-auto py-4">
-          <div className="flex justify-center gap-4">
-            <Button
-              onClick={handleSubmit(onFormSubmit)}
-              className="bg-blue-600 hover:bg-blue-500"
-            >
-              Save
-            </Button>
-            <Link to="/">
-              <Button variant="destructive">Cancel</Button>
-            </Link>
-          </div>
-          <p className="text-center text-sm text-gray-400">{userName}</p>
-        </CardFooter>
       </Card>
     </div>
   );

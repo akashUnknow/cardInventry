@@ -29,26 +29,18 @@ const schema = z.object({
 });
 
 const IdspBap = () => {
-  const [searchFs, setSearchFs] = useState(""); // separate search FS
-
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-    reset,
-  } = useForm({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      Profile: "",
-      PartnerCode: "",
-      Version: "",
-      FSno: "",
-      Configurator: "",
-      EDD: "",
-      Comment: "",
-      Type: "",
-    },
+  const API_BASE = import.meta.env.VITE_API_URL;
+  // const navigate = useNavigate();
+  const [formState, setFormState] = useState({
+    Profile: "",
+    PartnerCode: "",
+    Version: "",
+    FSno: "",
+    Configurator: "",
+    EDD: "",
+    Comment: "",
+    Type: "",
+    userName: "akash",
   });
 
   const handleSearch = async () => {
@@ -134,26 +126,26 @@ const IdspBap = () => {
   ];
 
   return (
-    <div className="min-h-screen flex justify-center bg-gray-100 px-4 pt-4 pb-20">
-      <Card className="w-full max-w-6xl flex flex-col mb-16 shadow-lg rounded-2xl">
+    <div className="min-h-screen flex justify-center items-start bg-gray-100 px-4 pt-6 pb-20">
+      <Card className="w-full max-w-4xl shadow-lg rounded-2xl">
         <CardHeader>
-          <CardTitle className="text-center text-2xl font-bold">
+          <CardTitle className="text-center text-2xl sm:text-3xl font-bold">
             IDSP (Add / Search)
           </CardTitle>
         </CardHeader>
 
         <CardContent className="px-6">
-          {/* Search FS No Input (NOT in form) */}
+          {/* Search FS No */}
           <div className="flex gap-2 mb-6">
             <Input
               placeholder="Enter FS No to Search"
-              value={searchFs}
-              onChange={(e) => setSearchFs(e.target.value)}
+              value={formState.FSno}
+              onChange={(e) => handleChange("FSno", e.target.value)}
             />
             <Button
               type="button"
               onClick={handleSearch}
-              className="bg-green-600 hover:bg-green-500"
+              className="bg-green-600 hover:bg-green-500 w-full sm:w-auto"
             >
               Search
             </Button>
@@ -161,7 +153,7 @@ const IdspBap = () => {
 
           {/* Form */}
           <form
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit}
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
           >
             {fields.map(({ name, label, type = "text" }) => (
@@ -170,7 +162,8 @@ const IdspBap = () => {
 
                 {name === "Type" ? (
                   <select
-                    {...register(name)}
+                    value={formState.Type}
+                    onChange={(e) => handleChange("Type", e.target.value)}
                     className="border rounded px-2 py-1 text-sm"
                   >
                     <option value="">Select Type</option>
@@ -196,16 +189,18 @@ const IdspBap = () => {
           </form>
         </CardContent>
 
-        <CardFooter className="flex flex-col gap-2 py-4">
-          <div className="flex justify-center gap-5 py-3">
+        <CardFooter className="flex flex-col gap-4 py-6">
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button
-              onClick={handleSubmit(onSubmit)}
+              onClick={handleSubmit}
               className="bg-blue-600 hover:bg-blue-500"
             >
               Save
             </Button>
-            <Link to="/">
-              <Button variant="destructive">Cancel</Button>
+            <Link to="/" className="w-full sm:w-auto">
+              <Button variant="destructive" className="w-full sm:w-auto">
+                Cancel
+              </Button>
             </Link>
           </div>
           <p className="text-center text-sm text-gray-400">akash</p>

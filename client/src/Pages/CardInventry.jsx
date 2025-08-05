@@ -67,7 +67,6 @@ const CardInventry = () => {
 
   const formFactors = ["TRI", "2FF", "3FF", "4FF", "MFF2", "B4"];
 
-  // Map UI label to field in API
   const mapFormFactorKey = (factor) => {
     switch (factor) {
       case "TRI":
@@ -89,26 +88,15 @@ const CardInventry = () => {
 
   const handleSearch = async () => {
     if (!selectedDescription || !selectedFormFactor) {
-      toast.warning("Please select both card description and form factor.")
+      toast.warning("Please select both card description and form factor.");
       return;
     }
 
     try {
       const response = await fetch(
-        `${API_BASE}/api/cards/search?description=${encodeURIComponent(
-          selectedDescription
-        )}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        `${API_BASE}/api/cards/search?description=${encodeURIComponent(selectedDescription)}`
       );
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+      if (!response.ok) throw new Error("Network response was not ok");
 
       const data = await response.json();
       setCardCount(data);
@@ -120,15 +108,14 @@ const CardInventry = () => {
 
   return (
     <div className="flex justify-center mt-[20px] bg-gray-100 min-h-[calc(100vh-20vh)] ">
-      <Card className="w-[900px] shadow-lg hover:shadow-xl h-[calc(100vh-50vh)] transition-shadow duration-300 ">
+      <Card className="w-[900px] shadow-lg hover:shadow-xl h-[calc(100vh-65vh)] transition-shadow duration-300 ">
         <CardHeader>
-          <CardTitle className="text-center text-3xl font-bold">
+          <CardTitle className="text-center text-2xl sm:text-3xl font-bold">
             Card Inventory
           </CardTitle>
         </CardHeader>
 
-        {/* Count display */}
-        <CardContent className="flex flex-col items-center gap-2 text-xl font-semibold">
+        <CardContent className="flex flex-col items-center gap-4 text-base sm:text-lg font-semibold">
           {cardCount ? (
             <>
               <p>
@@ -149,16 +136,16 @@ const CardInventry = () => {
               </p>
             </>
           ) : (
-            <p>No data to display</p>
+            <p className="text-gray-500">No data to display</p>
           )}
         </CardContent>
 
-        {/* Search section */}
-        <CardFooter className="flex flex-wrap gap-4 justify-center">
-          <div className="flex items-center gap-2">
+        {/* Search Fields */}
+        <CardFooter className="flex flex-col sm:flex-row gap-4 justify-center items-center sm:items-end">
+          <div className="flex flex-col gap-1 w-full sm:w-[300px]">
             <label className="font-medium">Card Description</label>
             <select
-              className="w-[300px] p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md"
               value={selectedDescription}
               onChange={(e) => setSelectedDescription(e.target.value)}
             >
@@ -171,10 +158,10 @@ const CardInventry = () => {
             </select>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-1 w-full sm:w-[150px]">
             <label className="font-medium">Form Factor</label>
             <select
-              className="w-[150px] p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md"
               value={selectedFormFactor}
               onChange={(e) => setSelectedFormFactor(e.target.value)}
             >
@@ -189,21 +176,21 @@ const CardInventry = () => {
 
           <Button
             onClick={handleSearch}
-            className="bg-blue-800 hover:bg-blue-400"
+            className="w-full sm:w-auto bg-blue-800 hover:bg-blue-600 text-white"
           >
             Search
           </Button>
         </CardFooter>
 
-        {/* Action buttons */}
-        <CardContent className="flex flex-row items-center gap-4 justify-center">
-          <Link to={RouteAddInventory}>
-            <Button className="bg-blue-800 hover:bg-blue-400">
+        {/* Navigation Buttons */}
+        <CardContent className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-4">
+          <Link to={RouteAddInventory} className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto bg-blue-800 hover:bg-blue-600">
               Add Inventory
             </Button>
           </Link>
-          <Link to={RoutePersoCard}>
-            <Button className="bg-blue-800 hover:bg-blue-400">
+          <Link to={RoutePersoCard} className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto bg-blue-800 hover:bg-blue-600">
               Perso Card
             </Button>
           </Link>

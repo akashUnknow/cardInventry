@@ -31,8 +31,6 @@ const Update = () => {
     factory: "",
     processor: "",
     validator: "",
-    arff: "", // ✅ Added
-    response: "", // ✅ Added
   });
 
   const API_BASE = import.meta.env.VITE_API_URL;
@@ -66,7 +64,6 @@ const Update = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitted", formState);
     try {
       const response = await fetch(`${API_BASE}/api/dg/update-by-gdindia`, {
         method: "PUT",
@@ -75,9 +72,9 @@ const Update = () => {
         },
         body: JSON.stringify(formState),
       });
-      if (!response.ok) {
-        throw new Error("Failed to update record");
-      }
+
+      if (!response.ok) throw new Error("Failed to update record");
+
       const data = await response.json();
       console.log("Update successful:", data);
     } catch (error) {
@@ -86,19 +83,22 @@ const Update = () => {
   };
 
   const handlegdIndia = async (gdIndiaValue) => {
-    console.log("Searching for GDINDIA:", gdIndiaValue);
     try {
       const response = await fetch(
-        `http://localhost:8080/api/dg/search?GdIndia=${gdIndiaValue}`
+        `${API_BASE}/api/dg/search?GdIndia=${gdIndiaValue}`
       );
+
       if (!response.ok) {
         throw new Error("GDINDIA not found");
       }
+
       const data = await response.json();
       console.log("Found record:", data);
+
+      // Optionally update formState with data
       setFormState((prev) => ({
         ...prev,
-        ...data,
+        ...data, // this assumes keys from API match your form fields
       }));
     } catch (error) {
       toast.error("GDINDIA not found: " + error.message);
@@ -107,27 +107,28 @@ const Update = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center bg-gray-100 p-4">
-      <Card className="w-full max-w-6xl h-[90vh] flex flex-col">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl font-bold">
-            DG Form
+    <div className="min-h-screen flex justify-center items-center bg-gray-100 p-4">
+      <Card className="w-full max-w-6xl max-h-[95vh] flex flex-col shadow-xl">
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl sm:text-2xl font-bold">
+            DG Form Update
           </CardTitle>
         </CardHeader>
 
+        {/* Scrollable area */}
         <div className="overflow-y-auto px-6">
           <form
             onSubmit={handleSubmit}
-            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
           >
             {fields.map(({ name, label, type = "text" }) => (
-              <div key={name} className="flex flex-col gap-1">
-                <label className="font-medium">{label}:</label>
+              <div key={name} className="flex flex-col">
+                <label className="font-medium text-sm mb-1">{label}:</label>
                 {name === "status" ? (
                   <select
                     value={formState.status}
                     onChange={(e) => handleChange("status", e.target.value)}
-                    className="border rounded px-2 py-1 text-sm"
+                    className="border rounded px-2 py-2 text-sm"
                   >
                     <option value="">Select status</option>
                     <option value="in-progress">In Progress</option>
@@ -149,21 +150,23 @@ const Update = () => {
               </div>
             ))}
           </form>
-        </div>
+        </CardContent>
 
-        <CardFooter className="flex flex-col gap-4 mt-auto py-4">
-          <div className="flex justify-center gap-4">
-            <Button
-              onClick={handleSubmit}
-              className="bg-blue-600 hover:bg-blue-500"
-            >
-              Update
+        <CardFooter className="flex flex-col sm:flex-row justify-center items-center gap-4 py-4 border-t">
+          <Button
+            onClick={handleSubmit}
+            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500"
+          >
+            Update
+          </Button>
+          <Link to="/" className="w-full sm:w-auto">
+            <Button variant="destructive" className="w-full sm:w-auto">
+              Cancel
             </Button>
-            <Link to="/">
-              <Button variant="destructive">Cancel</Button>
-            </Link>
-          </div>
-          <p className="text-center text-sm text-gray-400">akash</p>
+          </Link>
+          <p className="text-xs text-gray-400 text-center mt-2 sm:mt-0 w-full">
+            Akash
+          </p>
         </CardFooter>
       </Card>
     </div>

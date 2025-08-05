@@ -6,36 +6,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-// API URL
-const API_BASE = import.meta.env.VITE_API_URL + "/api/bap";
-
-// Zod Schema
-const bapSchema = z.object({
-  orderNo: z.string().min(1, "Order No. is required"),
-  sapNo: z.string().min(1, "SAP No. is required"),
-  cpssNo: z.string().min(1, "CPSS No. is required"),
-  dgCateg: z.string().min(1, "DG Categ is required"),
-  priority: z.string().min(1, "Priority is required"),
-  profile: z.string().min(1, "Profile Name is required"),
-  requestType: z.string().min(1, "Request Type is required"),
-  developer: z.string().min(1, "Developer is required"),
-  validator: z.string().min(1, "Validator is required"),
-  validationStatus: z.string().min(1, "Validation Status is required"),
-  orderReceive: z.string().min(1, "Order Receive date is required"),
-  slascheduledFinishDate: z.string().min(1, "SLA/Scheduled Finish Date is required"),
-  startDate: z.string().min(1, "Start Date is required"),
-  finishDate: z.string().min(1, "Finish Date is required"),
-  status: z.string().min(1, "Status is required"),
-  remarks: z.string().min(1, "Remarks are required"),
-});
+// const API_BASE = "http://localhost:8080/api/bap";\
+const API_BASE = import.meta.env.VITE_API_URL + "/api/bap"; // Adjust this to your actual API base URL
 
 const Bap = () => {
   const navigate = useNavigate();
@@ -94,7 +70,8 @@ const Bap = () => {
     }
   };
 
-  const onSubmit = async (formData) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const endpoint = isExisting
       ? `${API_BASE}/update-by-orderNo`
       : `${API_BASE}/add-profile`;
@@ -153,14 +130,12 @@ const Bap = () => {
 
   return (
     <div className="min-h-screen flex justify-center bg-gray-100 p-4">
-      <Card className="w-full max-w-6xl h-[90vh] flex flex-col">
+      <Card className="w-full max-w-6xl flex flex-col">
         <CardHeader>
-          <CardTitle className="text-center text-2xl font-bold">
-            DG Form
-          </CardTitle>
+          <CardTitle className="text-center text-2xl font-bold">BAP Form</CardTitle>
         </CardHeader>
 
-        <div className="overflow-y-auto px-6">
+        <CardContent className="overflow-y-auto px-4">
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
@@ -178,9 +153,7 @@ const Bap = () => {
                   >
                     <option value="">Select {label}</option>
                     {dropdownOptions[name].map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
+                      <option key={option} value={option}>{option}</option>
                     ))}
                   </select>
                 ) : (
@@ -199,14 +172,16 @@ const Bap = () => {
               </div>
             ))}
           </form>
-        </div>
+        </CardContent>
 
         <CardFooter className="flex flex-col gap-4 mt-auto py-4">
           <div className="flex justify-center gap-4">
             <Button
               onClick={handleSubmit(onSubmit)}
               className={`${
-                isExisting ? "bg-yellow-500 hover:bg-yellow-400" : "bg-blue-600 hover:bg-blue-500"
+                isExisting
+                  ? "bg-yellow-500 hover:bg-yellow-400"
+                  : "bg-blue-600 hover:bg-blue-500"
               }`}
             >
               {isExisting ? "Update" : "Save"}

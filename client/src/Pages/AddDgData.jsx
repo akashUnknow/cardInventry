@@ -46,8 +46,7 @@ const dgFormSchema = z.object({
 
 const AddDgData = () => {
   const navigate = useNavigate();
-  const user = useSelector((state) => state.auth.user); // from Redux
-  const userName = user.name
+  const userName = useSelector((state) => state.auth.user); // ✅ from Redux
 
   const {
     register,
@@ -71,9 +70,7 @@ const AddDgData = () => {
     try {
       const response = await fetch(`${API_BASE}/api/dg/add-card`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
@@ -117,25 +114,23 @@ const AddDgData = () => {
   ];
 
   return (
-    <div className="min-h-screen flex justify-center bg-gray-100 px-4 pt-4 pb-20">
-      <Card className="w-full max-w-6xl h-[90vh] flex flex-col">
+    <div className="min-h-screen flex justify-center bg-gray-100 px-4 py-6">
+      <Card className="w-full max-w-6xl flex flex-col">
         <CardHeader>
-          <CardTitle className="text-center text-2xl font-bold">
-            DG Form
-          </CardTitle>
+          <CardTitle className="text-center text-2xl font-bold">DG Form</CardTitle>
         </CardHeader>
 
-        <div className="overflow-y-auto px-6">
+        {/* Scrollable Form */}
+        <div className="overflow-y-auto px-6 py-2 max-h-[70vh]">
           <form
             onSubmit={handleSubmit(onFormSubmit)}
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
           >
-            {/* Hidden userName input */}
             <Input type="hidden" {...register("userName")} />
 
             {fields.map(({ name, label, type = "text" }) => (
               <div key={name} className="flex flex-col gap-1">
-                <label className="font-small">{label}:</label>
+                <label className="font-medium text-sm">{label}:</label>
 
                 {name === "status" ? (
                   <select
@@ -169,7 +164,18 @@ const AddDgData = () => {
           </form>
         </div>
 
-        <CardFooter className="flex justify-center py-4">
+        <CardFooter className="flex flex-col gap-4 mt-auto py-4">
+          <div className="flex justify-center gap-4">
+            <Button
+              onClick={handleSubmit(onFormSubmit)}
+              className="bg-blue-600 hover:bg-blue-500"
+            >
+              Save
+            </Button>
+            <Link to="/">
+              <Button variant="destructive">Cancel</Button>
+            </Link>
+          </div>
           <p className="text-center text-sm text-gray-400">{userName}</p>
         </CardFooter>
       </Card>

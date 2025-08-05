@@ -67,8 +67,6 @@ const Login = () => {
 
       if (response.ok) {
         dispatch(loginSuccess(data.user || {}));
-        console.log("Login successful:", data);
-        
         toast.success("Login successful!");
 
         if (data.token) {
@@ -95,14 +93,16 @@ const Login = () => {
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
-      className="min-h-screen flex justify-center items-center bg-gray-100"
+      className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-10"
     >
       <Card className="w-full max-w-md p-6 shadow-xl rounded-2xl">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold">Login to your account</CardTitle>
+        <CardHeader className="text-center mb-4">
+          <CardTitle className="text-2xl sm:text-3xl font-bold">
+            Login to your account
+          </CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-5">
           {/* Username */}
           <div className="space-y-2">
             <Label htmlFor="userName">Username</Label>
@@ -141,7 +141,7 @@ const Login = () => {
           </div>
 
           {/* Remember Me */}
-          <div className="flex items-center space-x-2 pt-2">
+          <div className="flex items-center space-x-2">
             <Checkbox
               id="remember"
               checked={rememberMe}
@@ -153,7 +153,7 @@ const Login = () => {
           </div>
         </CardContent>
 
-        <CardFooter className="flex flex-col gap-3">
+        <CardFooter className="flex flex-col gap-4 pt-6">
           <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-500">
             Sign In
           </Button>

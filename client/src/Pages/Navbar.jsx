@@ -1,205 +1,162 @@
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
-import { Link } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../redux/slices/authSlice.jsx";
 
 // Routes
 import {
   RouteIndex,
   Routecardinventry,
-  RouteAddInventory,
-  RoutePersoCard,
-  RouteLogin,
   RouteAdddgdata,
   RouteUpdate,
   RouteBap,
-  RouteBapCompleted,
   RouteBapGeneration,
   RouteBapReview,
   RouteBapHold,
   RouteIdsp,
+  RouteLogin,
 } from "@/helper/RouteName";
-import { useSelector, useDispatch } from "react-redux";
-// Import the logout action from your authSlice
-import { logout } from "../redux/slices/authSlice.jsx";
-import { useEffect } from "react";
 
 const Navbar = () => {
   const dispatch = useDispatch();
+  const [menuOpen, setMenuOpen] = useState(false);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const user = useSelector((state) => state.auth.user);
+
   useEffect(() => {
     console.log("User:", user);
     console.log("Is Authenticated:", isAuthenticated);
-    // You can add any side effects here if needed
   }, [isAuthenticated, user]);
+
   return (
-    <div className="w-full bg-white shadow border-b py-4 px-8 flex justify-between items-center">
-      <div>
-        <NavigationMenu>
-          <NavigationMenuList className="flex gap-6">
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link
-                  to={RouteIndex}
-                  className="font-semibold text-sm hover:text-blue-600"
-                >
-                  Home
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
+    <nav className="w-full bg-white shadow border-b px-4 py-3">
+      <div className="flex items-center justify-between">
+        {/* Logo or App Name */}
+        <div className="text-lg font-bold text-blue-600">
+          <Link to={RouteIndex}>Simphony</Link>
+        </div>
 
-            {/* Inventory Dropdown */}
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link
-                  to={Routecardinventry}
-                  className="font-semibold text-sm hover:text-blue-600"
-                >
-                  Inventory
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-
-            {/* Perso Card */}
-            {/* <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link
-                  to={RoutePersoCard}
-                  className="font-semibold text-sm hover:text-blue-600"
-                >
-                  Perso Card
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem> */}
-
-            {/* Add DG Data */}
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link
-                  to={RouteAdddgdata}
-                  className="font-semibold text-sm hover:text-blue-600"
-                >
-                  Add DG Data
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-
-            {/* Update */}
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link
-                  to={RouteUpdate}
-                  className="font-semibold text-sm hover:text-blue-600"
-                >
-                  Update
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-
-            {/* Login */}
-
-            {/* IDSP*/}
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link
-                  to={RouteIdsp}
-                  className="font-semibold text-sm hover:text-blue-600"
-                >
-                  IDSP
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-
-            {/* BAp*/}
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link
-                  to={RouteBap}
-                  className="font-semibold text-sm hover:text-blue-600"
-                >
-                  Bap
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-
-            {/* dropdown  */}
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <DropdownMenu>
-                  <DropdownMenuTrigger>Open</DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {/* <Link to={RouteBapCompleted}>
-                      <DropdownMenuItem>completed</DropdownMenuItem>
-                    </Link> */}
-                    <Link to={RouteBapGeneration}>
-                      <DropdownMenuItem>under-generation</DropdownMenuItem>
-                    </Link>
-                    <Link to={RouteBapReview}>
-                      <DropdownMenuItem>under-review</DropdownMenuItem>
-                    </Link>
-                    <Link to={RouteBapHold}>
-                      <DropdownMenuItem>Hold</DropdownMenuItem>
-                    </Link>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-      </div>
-
-      <div className="flex items-center gap-4">
-        <div>
+        {/* Desktop Menu */}
+        <div className="hidden sm:flex gap-6 items-center">
           <NavigationMenu>
-            {/* <NavigationMenuItem> */}
-            <NavigationMenuLink asChild>
-              <Link
-                to={RouteLogin}
-                className="font-semibold text-sm hover:text-blue-600"
-                onClick={() => {
-                  if (isAuthenticated) {
-                    dispatch(logout());
-                  }
-                }}
-              >
-                {isAuthenticated ? "Logout" : "Login"}
-              </Link>
-            </NavigationMenuLink>
-            {/* </NavigationMenuItem> */}
+            <NavigationMenuList className="flex gap-4">
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link to={Routecardinventry} className="text-sm font-semibold hover:text-blue-600">Inventory</Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link to={RouteAdddgdata} className="text-sm font-semibold hover:text-blue-600">Add DG Data</Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link to={RouteUpdate} className="text-sm font-semibold hover:text-blue-600">Update</Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link to={RouteIdsp} className="text-sm font-semibold hover:text-blue-600">IDSP</Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link to={RouteBap} className="text-sm font-semibold hover:text-blue-600">BAP</Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="text-sm font-semibold hover:text-blue-600">More</DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <Link to={RouteBapGeneration}><DropdownMenuItem>Under Generation</DropdownMenuItem></Link>
+                      <Link to={RouteBapReview}><DropdownMenuItem>Under Review</DropdownMenuItem></Link>
+                      <Link to={RouteBapHold}><DropdownMenuItem>Hold</DropdownMenuItem></Link>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            </NavigationMenuList>
           </NavigationMenu>
         </div>
-        <div>
+
+        {/* Auth + User Info */}
+        <div className="hidden sm:flex items-center gap-4">
+          <Link
+            to={RouteLogin}
+            className="text-sm font-semibold hover:text-blue-600"
+            onClick={() => isAuthenticated && dispatch(logout())}
+          >
+            {isAuthenticated ? "Logout" : "Login"}
+          </Link>
+
           <HoverCard>
-            <HoverCardTrigger className="cursor-pointer font-semibold">
+            <HoverCardTrigger className="cursor-pointer font-semibold text-sm">
               {user?.name || user?.username || "Guest"}
             </HoverCardTrigger>
             <HoverCardContent>
               {user?.email
                 ? `Logged in as ${user.email}`
-                : "The React Framework – created and maintained by @vercel."}
+                : "Welcome to the platform"}
             </HoverCardContent>
           </HoverCard>
         </div>
+
+        {/* Mobile Hamburger */}
+        <div className="sm:hidden">
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="text-gray-700 focus:outline-none"
+          >
+            ☰
+          </button>
+        </div>
       </div>
-    </div>
+
+      {/* Mobile Menu Items */}
+      {menuOpen && (
+        <div className="sm:hidden mt-4 flex flex-col gap-3 border-t pt-4">
+          <Link to={Routecardinventry} className="text-sm font-semibold hover:text-blue-600">Inventory</Link>
+          <Link to={RouteAdddgdata} className="text-sm font-semibold hover:text-blue-600">Add DG Data</Link>
+          <Link to={RouteUpdate} className="text-sm font-semibold hover:text-blue-600">Update</Link>
+          <Link to={RouteIdsp} className="text-sm font-semibold hover:text-blue-600">IDSP</Link>
+          <Link to={RouteBap} className="text-sm font-semibold hover:text-blue-600">BAP</Link>
+          <Link to={RouteBapGeneration} className="text-sm font-semibold hover:text-blue-600">Under Generation</Link>
+          <Link to={RouteBapReview} className="text-sm font-semibold hover:text-blue-600">Under Review</Link>
+          <Link to={RouteBapHold} className="text-sm font-semibold hover:text-blue-600">Hold</Link>
+          <Link
+            to={RouteLogin}
+            className="text-sm font-semibold hover:text-blue-600"
+            onClick={() => isAuthenticated && dispatch(logout())}
+          >
+            {isAuthenticated ? "Logout" : "Login"}
+          </Link>
+        </div>
+      )}
+    </nav>
   );
 };
 

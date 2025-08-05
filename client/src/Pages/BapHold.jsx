@@ -24,9 +24,7 @@ const BapHold = () => {
 
   const fetchHoldData = async () => {
     try {
-      const response = await fetch(
-        `${API_BASE}/idsp/type?type=Hold`
-      );
+      const response = await fetch(`${API_BASE}/idsp/type?type=Hold`);
       const json = await response.json();
 
       if (!response.ok) {
@@ -74,16 +72,11 @@ const BapHold = () => {
         type: editRowCopy.type,
       };
 
-      const response = await fetch(
-        `${API_BASE}/idsp/update-by-fs`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const response = await fetch(`${API_BASE}/idsp/update-by-fs`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
       const json = await response.json();
 
@@ -215,7 +208,9 @@ const BapHold = () => {
         row.original.id === editRowId ? (
           <Input
             value={editRowCopy.partnerCode}
-            onChange={(e) => handleInputChange("partnerCode", e.target.value)}
+            onChange={(e) =>
+              handleInputChange("partnerCode", e.target.value)
+            }
           />
         ) : (
           row.original.partnerCode
@@ -279,44 +274,53 @@ const BapHold = () => {
   });
 
   return (
-    <Card className="p-4">
-      <div className="flex items-center justify-between mb-4">
+    <Card className="p-4 w-full overflow-x-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
         <h2 className="text-xl font-bold">BAP - Hold</h2>
         <Button onClick={fetchHoldData} variant="outline" size="sm">
           Refresh
         </Button>
       </div>
-      <ScrollArea className="w-full overflow-auto">
-        <table className="w-full text-sm border-collapse">
-          <thead className="bg-gray-100">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className="border px-4 py-2 text-left font-medium"
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="border px-4 py-2">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+      <ScrollArea className="w-full overflow-x-auto">
+        <div className="min-w-[1000px]">
+          <table className="w-full text-sm border-collapse">
+            <thead className="bg-gray-100">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      className="border px-4 py-2 text-left font-medium whitespace-nowrap"
+                    >
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <td
+                      key={cell.id}
+                      className="border px-4 py-2 whitespace-nowrap"
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </ScrollArea>
     </Card>
   );

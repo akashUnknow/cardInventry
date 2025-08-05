@@ -20,62 +20,23 @@ const AddInventory = () => {
   const navigate = useNavigate();
 
   const cardDescriptions = [
-    "SkySIM Avior 80nm - AV340 BPU",
-    "SkySIM Avior 80nm - AV340 non BPU",
-    "SkySIM Avior 80nm - AV440",
-    "SkySIM Avior 80nm - AV1.2M (QM)",
-    "Orion - 480",
-    "Orion - 800",
-    "Orion - 800 M2M",
-    "Dragon/Wega LTE",
-    "Phoenix 400",
-    "Phoenix 512",
-    "Phoenix 512 Pro",
-    "Avior 480 Pro",
-    "CX 97 1M crypto in-car",
-    "Hercules 1.2M in-car",
-    "CX 97 1M no-crypto M2M",
-    "CX 97 1 M no-crypto in-car",
-    "Avior Pro 340",
-    "Hercules 1.2M 80nm",
-    "Wega",
-    "Argo 320",
-    "Phoenix 670",
-    "Luna 1.3M",
-    "Luna 1.3M M2M",
-    "Lyral.5M / Polarisl.5M",
-    "Luna 1.0M",
-    "Argo 512",
-    "Argo 512 M2m in Car",
-    "M2M AR360 in-car QFN8",
-    "Argo 400",
-    "AVIOR 560",
-    "AVIOR 256",
-    "AVIOR 320",
-    "AVIOR 420",
-    "Avior 700",
-    "Avior Pro 700",
-    "Dragon III",
-    "SkySIM CX - Scorpius 420",
-    "SkySIM CX - Scorpius 560 130nm",
-    "SkySIM CX - Scorpius 768",
-    "SkySIM CX 90nm - Cygnus 1.2M EVO classic",
-    "SkySIM CX 90nm - Cygnus 1.2M no Mifare",
-    "Aries",
-    "Tong Fang-Prism",
-    "Zeta 480",
-    "Zeta 132",
+    "SkySIM Avior 80nm - AV340 BPU", "SkySIM Avior 80nm - AV340 non BPU", "SkySIM Avior 80nm - AV440",
+    "SkySIM Avior 80nm - AV1.2M (QM)", "Orion - 480", "Orion - 800", "Orion - 800 M2M", "Dragon/Wega LTE",
+    "Phoenix 400", "Phoenix 512", "Phoenix 512 Pro", "Avior 480 Pro", "CX 97 1M crypto in-car",
+    "Hercules 1.2M in-car", "CX 97 1M no-crypto M2M", "CX 97 1 M no-crypto in-car", "Avior Pro 340",
+    "Hercules 1.2M 80nm", "Wega", "Argo 320", "Phoenix 670", "Luna 1.3M", "Luna 1.3M M2M",
+    "Lyral.5M / Polarisl.5M", "Luna 1.0M", "Argo 512", "Argo 512 M2m in Car", "M2M AR360 in-car QFN8",
+    "Argo 400", "AVIOR 560", "AVIOR 256", "AVIOR 320", "AVIOR 420", "Avior 700", "Avior Pro 700",
+    "Dragon III", "SkySIM CX - Scorpius 420", "SkySIM CX - Scorpius 560 130nm", "SkySIM CX - Scorpius 768",
+    "SkySIM CX 90nm - Cygnus 1.2M EVO classic", "SkySIM CX 90nm - Cygnus 1.2M no Mifare", "Aries",
+    "Tong Fang-Prism", "Zeta 480", "Zeta 132",
   ];
 
   const formFactors = ["TRI", "2FF", "3FF", "4FF", "MFF2", "B4"];
 
   const formFactorMap = {
-    TRI: "tri",
-    "2FF": "twoFF",
-    "3FF": "threeFF",
-    "4FF": "fourFF",
-    MFF2: "mff2",
-    B4: "b4",
+    TRI: "tri", "2FF": "twoFF", "3FF": "threeFF",
+    "4FF": "fourFF", MFF2: "mff2", B4: "b4",
   };
 
   const handleSubmit = async (e) => {
@@ -92,14 +53,10 @@ const AddInventory = () => {
       [mappedKey]: parseInt(quantity),
     };
 
-    console.log("Form Data:", data);
-
     try {
       const response = await fetch(`${API_BASE}/api/cards/add-card`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
@@ -116,62 +73,54 @@ const AddInventory = () => {
   };
 
   return (
-    <div className="flex justify-center mt-[20px] bg-gray-100 min-h-[calc(100vh-20vh)]">
-      <Card className="w-[600px] p-6 shadow-lg bg-white h-[calc(100vh-55vh)]">
+    <div className="flex justify-center py-8 px-4 bg-gray-100 min-h-[calc(100vh-60vh)]">
+      <Card className="w-full max-w-3xl shadow-md bg-white">
         <CardHeader>
-          <CardTitle className="text-center text-3xl font-bold">
-            Add Inventory
-          </CardTitle>
+          <CardTitle className="text-center text-2xl font-bold">Add Inventory</CardTitle>
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Card Description */}
-            <div className="flex items-center gap-4">
-              <label className="w-48 text-right font-medium">
-                Card Description:
-              </label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
+              <label className="font-medium sm:text-right">Card Description:</label>
               <select
-                className="flex-1 p-2 border border-gray-300 rounded-md"
+                className="col-span-2 p-2 border border-gray-300 rounded-md"
                 value={cardDescription}
                 onChange={(e) => setCardDescription(e.target.value)}
                 required
               >
                 <option value="">-- Select --</option>
                 {cardDescriptions.map((description, index) => (
-                  <option key={index} value={description}>
-                    {description}
-                  </option>
+                  <option key={index} value={description}>{description}</option>
                 ))}
               </select>
             </div>
 
             {/* Form Factor */}
-            <div className="flex items-center gap-4">
-              <label className="w-48 text-right font-medium">Form Factor:</label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
+              <label className="font-medium sm:text-right">Form Factor:</label>
               <select
-                className="flex-1 p-2 border border-gray-300 rounded-md"
+                className="col-span-2 p-2 border border-gray-300 rounded-md"
                 value={formFactor}
                 onChange={(e) => setFormFactor(e.target.value)}
                 required
               >
                 <option value="">-- Select --</option>
                 {formFactors.map((factor, index) => (
-                  <option key={index} value={factor}>
-                    {factor}
-                  </option>
+                  <option key={index} value={factor}>{factor}</option>
                 ))}
               </select>
             </div>
 
             {/* Quantity */}
-            <div className="flex items-center gap-4">
-              <label className="w-48 text-right font-medium">Quantity:</label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
+              <label className="font-medium sm:text-right">Quantity:</label>
               <Input
-                className="flex-1"
                 type="number"
-                placeholder="Quantity"
                 min="1"
+                placeholder="Quantity"
+                className="col-span-2"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 required
@@ -179,12 +128,12 @@ const AddInventory = () => {
             </div>
 
             {/* Buttons */}
-            <CardFooter className="flex justify-center gap-4 mt-6">
-              <Button type="submit" className="bg-blue-600 hover:bg-blue-500">
+            <CardFooter className="flex flex-col sm:flex-row justify-center gap-4 pt-6">
+              <Button type="submit" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500">
                 Save
               </Button>
-              <Link to={Routecardinventry}>
-                <Button type="button" className="bg-red-600 hover:bg-red-500">
+              <Link to={Routecardinventry} className="w-full sm:w-auto">
+                <Button type="button" className="w-full sm:w-auto bg-red-600 hover:bg-red-500">
                   Cancel
                 </Button>
               </Link>

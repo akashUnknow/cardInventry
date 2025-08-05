@@ -7,12 +7,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-// const API_BASE = "http://localhost:8080/api/bap";\
-const API_BASE = import.meta.env.VITE_API_URL + "/api/bap"; // Adjust this to your actual API base URL
+const API_BASE = import.meta.env.VITE_API_URL + "/api/bap";
 
 const Bap = () => {
   const navigate = useNavigate();
@@ -68,6 +67,7 @@ const Bap = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const endpoint = isExisting
       ? `${API_BASE}/update-by-orderNo`
       : `${API_BASE}/add-profile`;
@@ -126,14 +126,12 @@ const Bap = () => {
 
   return (
     <div className="min-h-screen flex justify-center bg-gray-100 p-4">
-      <Card className="w-full max-w-6xl h-[90vh] flex flex-col">
+      <Card className="w-full max-w-6xl flex flex-col">
         <CardHeader>
-          <CardTitle className="text-center text-2xl font-bold">
-            DG Form
-          </CardTitle>
+          <CardTitle className="text-center text-2xl font-bold">BAP Form</CardTitle>
         </CardHeader>
 
-        <div className="overflow-y-auto px-6">
+        <CardContent className="overflow-y-auto px-4">
           <form
             onSubmit={handleSubmit}
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
@@ -152,9 +150,7 @@ const Bap = () => {
                   >
                     <option value="">Select {label}</option>
                     {dropdownOptions[name].map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
+                      <option key={option} value={option}>{option}</option>
                     ))}
                   </select>
                 ) : (
@@ -170,14 +166,16 @@ const Bap = () => {
               </div>
             ))}
           </form>
-        </div>
+        </CardContent>
 
         <CardFooter className="flex flex-col gap-4 mt-auto py-4">
           <div className="flex justify-center gap-4">
             <Button
               onClick={handleSubmit}
               className={`${
-                isExisting ? "bg-yellow-500 hover:bg-yellow-400" : "bg-blue-600 hover:bg-blue-500"
+                isExisting
+                  ? "bg-yellow-500 hover:bg-yellow-400"
+                  : "bg-blue-600 hover:bg-blue-500"
               }`}
             >
               {isExisting ? "Update" : "Save"}

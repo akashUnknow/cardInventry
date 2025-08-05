@@ -33,19 +33,41 @@ const initialData = [
 const BAPcompleted = () => {
   const [data, setData] = useState(initialData);
   const [editRowId, setEditRowId] = useState(null);
+  const [editData, setEditData] = useState({});
 
-  const handleSave = (rowId, updatedRow) => {
-    const newData = data.map((item) => (item.fs === rowId ? updatedRow : item));
+  const API_BASE = import.meta.env.VITE_API_URL;
+
+  const handleEdit = (row) => {
+    setEditRowId(row.fs);
+    setEditData({ ...row });
+  };
+
+  const handleInputChange = (key, value) => {
+    setEditData((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleSave = async (rowId) => {
+    const newData = data.map((item) =>
+      item.fs === rowId ? { ...editData } : item
+    );
     setData(newData);
     setEditRowId(null);
+    setEditData({});
     toast.success("Row updated successfully!");
+
+    // TODO: Optional: Send update to backend here
+    // await fetch(`${API_BASE}/api/update`, { method: 'PUT', body: JSON.stringify(editData) });
   };
 
   const handleCancel = () => {
     setEditRowId(null);
+    setEditData({});
     toast.info("Edit cancelled.");
   };
-const API_BASE = import.meta.env.VITE_API_URL;
+
   const columns = [
     {
       accessorKey: "fs",
@@ -53,8 +75,8 @@ const API_BASE = import.meta.env.VITE_API_URL;
       cell: ({ row }) =>
         row.original.fs === editRowId ? (
           <Input
-            defaultValue={row.original.fs}
-            onChange={(e) => (row.original.fs = e.target.value)}
+            value={editData.fs}
+            onChange={(e) => handleInputChange("fs", e.target.value)}
           />
         ) : (
           row.original.fs
@@ -66,8 +88,8 @@ const API_BASE = import.meta.env.VITE_API_URL;
       cell: ({ row }) =>
         row.original.fs === editRowId ? (
           <Input
-            defaultValue={row.original.profile}
-            onChange={(e) => (row.original.profile = e.target.value)}
+            value={editData.profile}
+            onChange={(e) => handleInputChange("profile", e.target.value)}
           />
         ) : (
           row.original.profile
@@ -79,8 +101,8 @@ const API_BASE = import.meta.env.VITE_API_URL;
       cell: ({ row }) =>
         row.original.fs === editRowId ? (
           <select
-            defaultValue={row.original.status}
-            onChange={(e) => (row.original.status = e.target.value)}
+            value={editData.status}
+            onChange={(e) => handleInputChange("status", e.target.value)}
             className="w-full px-2 py-1 rounded border text-sm"
           >
             <option value="In Review">In Review</option>
@@ -97,8 +119,8 @@ const API_BASE = import.meta.env.VITE_API_URL;
       cell: ({ row }) =>
         row.original.fs === editRowId ? (
           <Input
-            defaultValue={row.original.configurator}
-            onChange={(e) => (row.original.configurator = e.target.value)}
+            value={editData.configurator}
+            onChange={(e) => handleInputChange("configurator", e.target.value)}
           />
         ) : (
           row.original.configurator
@@ -110,8 +132,8 @@ const API_BASE = import.meta.env.VITE_API_URL;
       cell: ({ row }) =>
         row.original.fs === editRowId ? (
           <Input
-            defaultValue={row.original.comment}
-            onChange={(e) => (row.original.comment = e.target.value)}
+            value={editData.comment}
+            onChange={(e) => handleInputChange("comment", e.target.value)}
           />
         ) : (
           row.original.comment
@@ -124,8 +146,8 @@ const API_BASE = import.meta.env.VITE_API_URL;
         row.original.fs === editRowId ? (
           <Input
             type="date"
-            defaultValue={row.original.edd}
-            onChange={(e) => (row.original.edd = e.target.value)}
+            value={editData.edd}
+            onChange={(e) => handleInputChange("edd", e.target.value)}
           />
         ) : (
           row.original.edd
@@ -139,7 +161,7 @@ const API_BASE = import.meta.env.VITE_API_URL;
         return isEditing ? (
           <div className="flex gap-2">
             <Button
-              onClick={() => handleSave(row.original.fs, row.original)}
+              onClick={() => handleSave(row.original.fs)}
               variant="outline"
               size="icon"
               className="text-green-600"
@@ -157,7 +179,7 @@ const API_BASE = import.meta.env.VITE_API_URL;
           </div>
         ) : (
           <Button
-            onClick={() => setEditRowId(row.original.fs)}
+            onClick={() => handleEdit(row.original)}
             variant="outline"
             size="icon"
             className="text-blue-600"
@@ -176,7 +198,7 @@ const API_BASE = import.meta.env.VITE_API_URL;
   });
 
   return (
-    <Card className="p-4">
+    <Card className="p-4 w-full overflow-x-auto">
       <h2 className="text-xl font-bold mb-4">IDSP Data - Completed</h2>
       <ScrollArea className="w-full overflow-auto">
         <table className="w-full text-sm border-collapse">
@@ -188,7 +210,10 @@ const API_BASE = import.meta.env.VITE_API_URL;
                     key={header.id}
                     className="border px-4 py-2 text-left font-medium"
                   >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
                   </th>
                 ))}
               </tr>

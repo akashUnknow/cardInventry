@@ -24,9 +24,7 @@ const BapUnderReview = () => {
 
   const fetchUnderReviewData = async () => {
     try {
-      const response = await fetch(
-        `${API_BASE}/api/idsp/type?type=In Review`
-      );
+      const response = await fetch(`${API_BASE}/api/idsp/type?type=In Review`);
       const json = await response.json();
 
       if (!response.ok) {
@@ -74,16 +72,13 @@ const BapUnderReview = () => {
         version: editRowCopy.version,
       };
 
-      const response = await fetch(
-        `${API_BASE}/api/idsp/update-by-fs`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const response = await fetch(`${API_BASE}/api/idsp/update-by-fs`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
       const json = await response.json();
 
@@ -253,39 +248,47 @@ const BapUnderReview = () => {
   });
 
   return (
-    <Card className="p-4">
-      <h2 className="text-xl font-bold mb-4">BAP - Under Review</h2>
-      <ScrollArea className="w-full overflow-auto">
-        <table className="w-full text-sm border-collapse">
-          <thead className="bg-gray-100">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className="border px-4 py-2 text-left font-medium"
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="border px-4 py-2">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <Card className="p-4 w-full overflow-x-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
+        <h2 className="text-xl font-bold">BAP - Under Review</h2>
+        <Button onClick={fetchUnderReviewData} variant="outline" size="sm">
+          Refresh
+        </Button>
+      </div>
+
+      <ScrollArea className="w-full overflow-x-auto">
+        <div className="min-w-[1000px]">
+          <table className="w-full text-sm border-collapse">
+            <thead className="bg-gray-100">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      className="border px-4 py-2 text-left font-medium whitespace-nowrap"
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <td
+                      key={cell.id}
+                      className="border px-4 py-2 whitespace-nowrap"
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </ScrollArea>
     </Card>
   );

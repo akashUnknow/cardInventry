@@ -131,9 +131,9 @@ const ChartDashboard = () => {
   };
 
   return (
-    <div className="w-full min-h-screen p-4 bg-gray-100 space-y-4">
-      {/* Filters */}
-      <Card className="max-w-7xl mx-auto p-4">
+    <div className="w-full min-h-screen p-4 bg-gray-100 space-y-6">
+      {/* Filters Section */}
+      <Card className="max-w-7xl mx-auto p-4 space-y-2 sm:space-y-0">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">Category</label>
@@ -187,7 +187,7 @@ const ChartDashboard = () => {
           <CardHeader>
             <CardTitle>Data Generation (DG)</CardTitle>
           </CardHeader>
-          <CardContent className="h-[450px] w-full">
+          <CardContent className="h-[300px] sm:h-[450px] w-full">
             <div className="h-full w-full">
               <Bar data={dgData} options={options} />
             </div>
@@ -198,7 +198,7 @@ const ChartDashboard = () => {
           <CardHeader>
             <CardTitle>BAP Monthly Count</CardTitle>
           </CardHeader>
-          <CardContent className="h-[450px] w-full">
+          <CardContent className="h-[300px] sm:h-[450px] w-full">
             <div className="h-full w-full">
               <Bar data={bapData} options={options} />
             </div>

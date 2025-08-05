@@ -74,8 +74,8 @@ const PersoCard = () => {
     "Zeta 480",
     "Zeta 132",
   ];
-  const API_BASE = import.meta.env.VITE_API_URL;
 
+  const API_BASE = import.meta.env.VITE_API_URL;
   const formFactors = ["TRI", "2FF", "3FF", "4FF", "MFF2", "B4"];
 
   const handleChange = (e) => {
@@ -84,7 +84,6 @@ const PersoCard = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const {
       cardDescription,
       formFactor,
@@ -97,15 +96,20 @@ const PersoCard = () => {
       telcaPersoTest,
       shredCard,
     } = formData;
-    if (
-      !cardDescription ||
-      !formFactor ||
-      !usedQuantity ||
-      isNaN(usedQuantity)
-    ) {
+
+    if (!cardDescription || !formFactor || !usedQuantity || isNaN(usedQuantity)) {
       toast.warn("Please enter all required fields correctly.");
       return;
     }
+
+    if (
+      parseInt(rst || 0) + parseInt(telcaPersoTest || 0) + parseInt(shredCard || 0) !==
+      parseInt(usedQuantity)
+    ) {
+      toast.warn("RST + TelcaPerso Test + Shred Card must equal Used Quantity.");
+      return;
+    }
+
     try {
       const persoData = {
         cardDescription,
@@ -119,65 +123,49 @@ const PersoCard = () => {
         telcaPersoTest,
         shredCard,
       };
-      if (
-        parseInt(rst) + parseInt(telcaPersoTest) + parseInt(shredCard) !==
-        parseInt(usedQuantity)
-      ) {
-        toast.warn(
-          "Total of RST, TelcaPerso Test, and Shred Card must equal Used Quantity."
-        );
-        return;
-      }
 
-      const response = await fetch(
-        `${API_BASE}/api/cards/perso-card`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(persoData), // replace with actual state
-        }
-      );
+      const response = await fetch(`${API_BASE}/api/cards/perso-card`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(persoData),
+      });
 
       if (!response.ok) {
-        const errorText = await response.text(); // get plain text message
-        throw new Error(errorText); // this will go to catch block
+        const errorText = await response.text();
+        throw new Error(errorText);
       }
 
-      const result = await response.json();
       toast.success("Card details saved successfully!");
-      navigate(Routecardinventry); // redirect to card inventory page
-      console.log(result);
+      navigate(Routecardinventry);
     } catch (err) {
       alert(`❌ Error: ${err.message}`);
     }
   };
 
   return (
-    <div className="flex justify-center mt-[20px] bg-gray-100 min-h-[calc(100vh-20vh)]">
-      <Card className="w-[600px] p-6 shadow-lg bg-white h-[calc(100vh-20vh)]">
+    <div className="min-h-screen flex justify-center items-center bg-gray-100 px-4 py-10">
+      <Card className="w-full max-w-3xl p-6 shadow-lg rounded-2xl bg-white">
         <CardHeader>
-          <CardTitle className="text-center text-3xl font-bold">
+          <CardTitle className="text-center text-2xl sm:text-3xl font-bold">
             Perso Card Details
           </CardTitle>
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Card Description */}
-            <div className="flex items-center gap-4">
-              <label className="w-48 text-right font-medium">
-                Card Description:
-              </label>
+            <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+              <label className="sm:w-48 font-medium">Card Description:</label>
               <select
                 name="cardDescription"
                 value={formData.cardDescription}
                 onChange={handleChange}
-                className="flex-1 p-2 border border-gray-300 rounded-md"
+                className="w-full flex-1 p-2 border border-gray-300 rounded-md"
                 required
               >
                 <option value="">-- Select --</option>
-                {cardDescriptions.map((desc, index) => (
-                  <option key={index} value={desc}>
+                {cardDescriptions.map((desc, idx) => (
+                  <option key={idx} value={desc}>
                     {desc}
                   </option>
                 ))}
@@ -185,39 +173,34 @@ const PersoCard = () => {
             </div>
 
             {/* Form Factor */}
-            <div className="flex items-center gap-4">
-              <label className="w-48 text-right font-medium">
-                Form Factor:
-              </label>
+            <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+              <label className="sm:w-48 font-medium">Form Factor:</label>
               <select
                 name="formFactor"
                 value={formData.formFactor}
                 onChange={handleChange}
-                className="flex-1 p-2 border border-gray-300 rounded-md"
+                className="w-full flex-1 p-2 border border-gray-300 rounded-md"
                 required
               >
                 <option value="">-- Select --</option>
-                {formFactors.map((f, index) => (
-                  <option key={index} value={f}>
+                {formFactors.map((f, idx) => (
+                  <option key={idx} value={f}>
                     {f}
                   </option>
                 ))}
               </select>
             </div>
 
-            {/* Quantity */}
-            <div className="flex items-center gap-4">
-              <label className="w-48 text-right font-medium">
-                Used Quantity:
-              </label>
+            {/* Used Quantity */}
+            <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+              <label className="sm:w-48 font-medium">Used Quantity:</label>
               <Input
                 type="number"
                 name="usedQuantity"
                 value={formData.usedQuantity}
                 onChange={handleChange}
                 min="1"
-                className="flex-1"
-                placeholder="Used Quantity"
+                className="w-full flex-1"
                 required
               />
             </div>
@@ -225,33 +208,38 @@ const PersoCard = () => {
             {/* Other Fields */}
             {[
               ["profile", "Profile"],
-              ["configurator", "Configurator (Name)"],
-              ["issuedTo", "Issued To (Name)"],
+              ["configurator", "Configurator"],
+              ["issuedTo", "Issued To"],
               ["customer", "Customer"],
               ["rst", "RST"],
               ["telcaPersoTest", "TelcaPerso Test"],
               ["shredCard", "Shred Card"],
             ].map(([name, label]) => (
-              <div key={name} className="flex items-center gap-4">
-                <label className="w-48 text-right font-medium">{label}:</label>
+              <div
+                key={name}
+                className="flex flex-col sm:flex-row gap-2 items-start sm:items-center"
+              >
+                <label className="sm:w-48 font-medium">{label}:</label>
                 <Input
                   name={name}
                   value={formData[name]}
                   onChange={handleChange}
-                  className="flex-1"
-                  type="text"
+                  className="w-full flex-1"
                   placeholder={label}
                 />
               </div>
             ))}
 
             {/* Actions */}
-            <CardFooter className="flex justify-center gap-4 mt-6">
-              <Button type="submit" className="bg-blue-600 hover:bg-blue-500">
+            <CardFooter className="flex flex-col sm:flex-row justify-center gap-4 pt-6">
+              <Button type="submit" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500">
                 Save & Use
               </Button>
-              <Link to={Routecardinventry}>
-                <Button type="button" className="bg-red-600 hover:bg-red-500">
+              <Link to={Routecardinventry} className="w-full sm:w-auto">
+                <Button
+                  type="button"
+                  className="w-full sm:w-auto bg-red-600 hover:bg-red-500"
+                >
                   Cancel
                 </Button>
               </Link>

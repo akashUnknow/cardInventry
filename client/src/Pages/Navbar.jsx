@@ -32,6 +32,7 @@ import {
   RouteIdsp,
   RouteLogin,
 } from "@/helper/RouteName";
+import { SearchInput } from "@/components/SearchInput.jsx";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -42,7 +43,11 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (menuOpen && sidebarRef.current && !sidebarRef.current.contains(e.target)) {
+      if (
+        menuOpen &&
+        sidebarRef.current &&
+        !sidebarRef.current.contains(e.target)
+      ) {
         setMenuOpen(false);
       }
     };
@@ -73,7 +78,10 @@ const Navbar = () => {
                 ].map((item) => (
                   <NavigationMenuItem key={item.route}>
                     <NavigationMenuLink asChild>
-                      <Link to={item.route} className="text-sm font-semibold hover:text-blue-600">
+                      <Link
+                        to={item.route}
+                        className="text-sm font-semibold hover:text-blue-600"
+                      >
                         {item.label}
                       </Link>
                     </NavigationMenuLink>
@@ -88,9 +96,15 @@ const Navbar = () => {
                         More
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        <Link to={RouteBapGeneration}><DropdownMenuItem>Under Generation</DropdownMenuItem></Link>
-                        <Link to={RouteBapReview}><DropdownMenuItem>Under Review</DropdownMenuItem></Link>
-                        <Link to={RouteBapHold}><DropdownMenuItem>Hold</DropdownMenuItem></Link>
+                        <Link to={RouteBapGeneration}>
+                          <DropdownMenuItem>Under Generation</DropdownMenuItem>
+                        </Link>
+                        <Link to={RouteBapReview}>
+                          <DropdownMenuItem>Under Review</DropdownMenuItem>
+                        </Link>
+                        <Link to={RouteBapHold}>
+                          <DropdownMenuItem>Hold</DropdownMenuItem>
+                        </Link>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </NavigationMenuLink>
@@ -99,8 +113,17 @@ const Navbar = () => {
             </NavigationMenu>
           </div>
 
-          {/* Desktop User Info */}
+          {/* Desktop Right Side */}
           <div className="hidden md:flex items-center gap-4">
+            {/* 🔎 Search bar on desktop */}
+            <div className="w-64">
+              <SearchInput
+                onChange={(val) => console.log( val)}
+                onSearch={(val) => console.log( val)}
+                onClear={() => console.log()}
+              />
+            </div>
+
             <Link
               to={RouteLogin}
               className="text-sm font-semibold hover:text-blue-600"
@@ -144,8 +167,18 @@ const Navbar = () => {
         <div className="px-6 py-4 border-b font-bold text-lg text-blue-600">
           Simphony
         </div>
+
+        {/* 🔎 Search bar inside mobile sidebar */}
+        <div className="p-4">
+          <SearchInput
+            onChange={(val) => console.log("typing:", val)}
+            onSearch={(val) => console.log("search submitted:", val)}
+            onClear={() => console.log("cleared")}
+          />
+        </div>
+
         <div className="flex flex-col gap-4 p-4">
-          {[ 
+          {[
             { label: "Inventory", route: Routecardinventry },
             { label: "Add DG Data", route: RouteAdddgdata },
             { label: "Update", route: RouteUpdate },
